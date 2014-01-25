@@ -63,6 +63,16 @@ namespace GG2014
 
         }
 
+        public int getLivesLeft()
+        {
+            return mVie;
+        }
+
+        public void kill()
+        {
+            mVie--;
+        }
+
         public double getAngle()
         {
             return this.angle;
