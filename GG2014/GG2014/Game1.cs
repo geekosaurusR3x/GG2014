@@ -26,13 +26,20 @@ namespace GG2014
         bool touche_down;
         bool jump_touche_down;
         Texture2D tex_ennemy_leaf;
+<<<<<<< HEAD
         int xi = 1380;
+=======
+        Texture2D tex_background;
+
+>>>>>>> 977554a2f8fe04f960e6686da4e84445f64c9f10
         Vent vent;
         Note note;
         double EnemiTime;
         double TouchTime;
         double JumpTime;
-        
+
+        GenerateurObjet mRandomProvider;
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -41,7 +48,7 @@ namespace GG2014
 
         protected override void Initialize()
         {
-            graphics.IsFullScreen = false;
+            graphics.IsFullScreen = true;
             graphics.PreferredBackBufferWidth = 1380;
             graphics.PreferredBackBufferHeight = 768;
             graphics.ApplyChanges();
@@ -70,21 +77,26 @@ namespace GG2014
             EnemiTime = 0;
             TouchTime = 0;
             JumpTime = 0;
-
+            mRandomProvider = new GenerateurObjet();
             Texture2D tex1, tex2, tex3;
             tex1 = Content.Load<Texture2D>("noire-32");
             tex2 = Content.Load<Texture2D>("double-croche-32");
             tex3 = Content.Load<Texture2D>("triple-croche-32");
-            tex_ennemy_leaf = Content.Load<Texture2D>("leaf-128");
+            tex_ennemy_leaf = Content.Load<Texture2D>("leaf-32");
+            tex_background = Content.Load<Texture2D>("background");
             note = new Note(0, 0, tex1, tex2, tex3, 3);
             idNoteCorde = 1;
             touche_down = false;
+<<<<<<< HEAD
 
             vent = new Vent(0, 0, Content.Load<Texture2D>("cloud"),-1);
 
             jump_touche_down = false;
+=======
+            jump_touche_down = false;
+            vent = new Vent(0, 0, tex1);
+>>>>>>> 977554a2f8fe04f960e6686da4e84445f64c9f10
         }
-
 
         protected override void UnloadContent()
         {
@@ -102,15 +114,16 @@ namespace GG2014
             if (EnemiTime > 2.0f)
             {
                 EnemiTime -= 2.0f;
-                Enemis temp = new Enemis(cordes[0].getStart().X - 10, cordes[0].getStart().Y - 10, cordes[0].getVectorDir());
-                temp.setSize(128.0);
+                int cordId = mRandomProvider.getCorde();
+                Enemis temp = new Enemis(cordes[cordId].getStart().X, cordes[cordId].getStart().Y, cordes[cordId].getVectorDir());
+                temp.setSize(32);
                 temp.setTexture(tex_ennemy_leaf);
                 ListObject.Add(temp);
             }
 
-            if (TouchTime > 0.01f)
+            if (TouchTime > 0.05f)
             {
-                TouchTime -= 0.01f;
+                TouchTime -= 0.05f;
                 touche_down = false;
             }
 
@@ -132,7 +145,20 @@ namespace GG2014
                     ListObject[i].setPosition((temp2.getPos().X + (temp2.getDir().X / 1)), (temp2.getPos().Y + (temp2.getDir().Y / 1)));
                     ListObject[i].setSize(temp2.getSize());
                 }
-                System.Console.WriteLine(ListObject.Count);
+
+                if (temp2.getPos().X >= note.getPos().X - 20 && temp2.getPos().X <= note.getPos().X + 20 && temp2.getPos().Y > note.getPos().Y)
+                {
+                    ListObject.Remove(temp2);
+                    if (note.getLivesLeft() > 1)
+                    {
+                        note.kill();
+                    }
+                    else
+                    {   
+                        // Game over
+                        System.Console.WriteLine("You got screwed");
+                    }
+                }
             }
 
             // GTFO
@@ -158,7 +184,8 @@ namespace GG2014
             {
                 if (idNoteCorde == 3)
                 {
-                    //game over
+                    // Game over
+                    System.Console.WriteLine("You fell");
                 }
                 else 
                 {
@@ -182,9 +209,10 @@ namespace GG2014
 
             if(idNoteCorde < 0 || idNoteCorde > 3)
             {
-                System.Console.WriteLine("GAME OVER" + idNoteCorde);
+                System.Console.WriteLine("GAME OVER (" + idNoteCorde + ")");
                 System.Environment.Exit(0);
             }
+
             note.setPosition(cordes[idNoteCorde].getEnd().X, cordes[idNoteCorde].getEnd().Y);
 
             base.Update(gameTime);
@@ -195,6 +223,10 @@ namespace GG2014
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
             spriteBatch.Begin();
+
+            // Background
+            Rectangle backgroundRectangle = new Rectangle(0, 0, GraphicsDevice.Viewport.Bounds.Width, GraphicsDevice.Viewport.Bounds.Height);
+            spriteBatch.Draw(tex_background, backgroundRectangle, Color.White);
 
             for (int i = 0; i <= 3; i++)
             {
@@ -207,7 +239,7 @@ namespace GG2014
             }
 
             note.Draw(spriteBatch);
-            vent.Draw(spriteBatch);
+            // vent.Draw(spriteBatch);
             spriteBatch.End();
             base.Draw(gameTime);
         }
