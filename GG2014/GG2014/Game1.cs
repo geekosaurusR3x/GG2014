@@ -40,7 +40,7 @@ namespace GG2014
         protected override void Initialize()
         {
             graphics.PreferredBackBufferWidth = 800;
-            graphics.PreferredBackBufferHeight = 600;
+            graphics.PreferredBackBufferHeight = 650;
 
             graphics.ApplyChanges();
             base.Initialize();
@@ -65,6 +65,7 @@ namespace GG2014
             tex2 = Content.Load<Texture2D>("double-croche-32");
             tex3 = Content.Load<Texture2D>("triple-croche-32");
             note = new Note(0, 0, tex1, tex2, tex3,3);
+            note.setPosition((int)cordes[0].getEnd().X, (int)cordes[0].getEnd().Y);
             idNoteCorde = 1;
         }
 

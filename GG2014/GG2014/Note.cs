@@ -50,8 +50,8 @@ namespace GG2014
         }
         public void setPosition(int x, int y)
         {
-            this.x = x-90;
-            this.y = y-100;
+            this.x = x;
+            this.y = y;
             destination = new Rectangle(this.x, this.y, 32, 32);
         }
 
