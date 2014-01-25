@@ -23,6 +23,7 @@ namespace GG2014
         List<Enemis> ListObject;
         bool touche_down;
 
+        Vent vent;
         Note note;
         double EnemiTime;
         double TouchTime;
@@ -72,6 +73,8 @@ namespace GG2014
             note = new Note(0, 0, tex1, tex2, tex3,3);
             idNoteCorde = 1;
             touche_down = false;
+
+            vent = new Vent(0, 0, tex1);
         }
 
 
@@ -187,7 +190,7 @@ namespace GG2014
             }
 
             note.Draw(spriteBatch);
-
+            vent.Draw(spriteBatch);
             spriteBatch.End();
             base.Draw(gameTime);
         }
