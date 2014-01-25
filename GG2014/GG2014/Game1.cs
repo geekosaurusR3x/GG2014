@@ -19,6 +19,12 @@ namespace GG2014
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         Texture2D TextureCorde;
+        Corde C1;
+        Corde C2;
+        Corde C3;
+        Corde C4;
+        List<Object> ListObject;
+        
 
         public Game1()
         {
@@ -34,9 +40,14 @@ namespace GG2014
 
         protected override void LoadContent()
         {
+            ListObject = new List<Object>();
             TextureCorde = new Texture2D(GraphicsDevice, 1, 1);
             TextureCorde.SetData<Color>(new Color[] { Color.White });
             spriteBatch = new SpriteBatch(GraphicsDevice);
+            C1 = new Corde(350, 300, 100, 600);
+            C2 = new Corde(385, 300, 300, 600);
+            C3 = new Corde(415, 300, 500, 600);
+            C4 = new Corde(450, 300, 700, 600);
 
         }
 
@@ -48,11 +59,17 @@ namespace GG2014
 
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
-                this.Exit();
+            double time = gameTime.ElapsedGameTime.TotalSeconds;
+            if (time > 100)
+            {
+                ListObject.Add(new Object(C1.getStart().X,C1.getStart().Y,C1.getVectorDir()));
+            }
 
-            // TODO: Add your update logic here
-
+            for (int i = 0; i< ListObject.Count-1; i++)
+            {
+                Object temp2 = ListObject[i];
+                ListObject[i] = new Object((temp2.getPos().X + temp2.getDir().X), (temp2.getPos().Y + temp2.getDir().Y), temp2.getDir());
+            }
             base.Update(gameTime);
         }
 
@@ -60,7 +77,21 @@ namespace GG2014
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
             spriteBatch.Begin();
-            DrawLine(spriteBatch, new Vector2(200, 200),new Vector2(100, 50));
+            DrawLine(spriteBatch, C1.getStart(), C1.getEnd());
+            DrawLine(spriteBatch, C2.getStart(), C2.getEnd());
+            DrawLine(spriteBatch, C3.getStart(), C3.getEnd());
+            DrawLine(spriteBatch, C4.getStart(), C4.getEnd());
+
+            for (int i = 0; i < ListObject.Count - 1; i++)
+            {
+                ;
+                Texture2D dummyTexture = new Texture2D(GraphicsDevice, 1, 1);
+                dummyTexture.SetData(new Color[] { Color.White });
+                Object temp2 = ListObject[i];
+                Rectangle temp = new Rectangle((int)(temp2.getPos().X),((int)temp2.getPos().Y),(int)(temp2.getPos().X+10),(int)(temp2.getPos().Y+10));
+                spriteBatch.Draw(dummyTexture, temp, Color.Black);
+            }
+
             spriteBatch.End();
             base.Draw(gameTime);
         }
