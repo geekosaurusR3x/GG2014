@@ -26,7 +26,7 @@ namespace GG2014
         bool touche_down;
         bool jump_touche_down;
         Texture2D tex_ennemy_leaf;
-
+        int xi = 1380;
         Vent vent;
         Note note;
         double EnemiTime;
@@ -79,12 +79,10 @@ namespace GG2014
             note = new Note(0, 0, tex1, tex2, tex3, 3);
             idNoteCorde = 1;
             touche_down = false;
-<<<<<<< HEAD
 
-            vent = new Vent(0, 0, tex1);
-=======
+            vent = new Vent(0, 0, Content.Load<Texture2D>("cloud"),-1);
+
             jump_touche_down = false;
->>>>>>> af01c4ef9a52ee28d96e80c8f552400a940d3f9a
         }
 
 
@@ -95,7 +93,8 @@ namespace GG2014
 
         protected override void Update(GameTime gameTime)
         {
-            
+            vent.setPosition(xi, 0);
+            xi--;
             double time = gameTime.ElapsedGameTime.TotalSeconds;
             EnemiTime += time;
             TouchTime += time;

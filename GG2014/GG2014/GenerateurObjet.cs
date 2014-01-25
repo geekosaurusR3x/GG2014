@@ -39,6 +39,15 @@ namespace GG2014
                 return false;
             }
         }
+
+        public int directionVent()
+        {
+            int dir = rand.Next(0, 11);
+            if (dir > 5)
+                return 1;
+            else
+                return -1;
+        }
         
     }
 }
