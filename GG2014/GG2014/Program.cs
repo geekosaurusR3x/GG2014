@@ -1,6 +1,6 @@
 using System;
 
-namespace GGJ2014
+namespace GG2014
 {
 #if WINDOWS || XBOX
     static class Program
