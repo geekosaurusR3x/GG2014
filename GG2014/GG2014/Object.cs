@@ -16,7 +16,7 @@ namespace GG2014
     {
         Vector2 mPos;
         double mSize;
-        Texture2D mTexture;
+        protected Texture2D mTexture;
         Rectangle mSource;
 
         public Object(float x, float y)
@@ -37,6 +37,12 @@ namespace GG2014
         {
             return mTexture;
         }
+
+        public void setTexture(Texture2D texture)
+        {
+            this.mTexture = texture;
+        }
+
         public Vector2 getPos()
         {
             return mPos;
@@ -70,7 +76,7 @@ namespace GG2014
                 texture = mTexture;
             }
             Rectangle destination = new Rectangle((int)this.getPos().X - ((int)this.mSize / 2), (int)this.getPos().Y - ((int)this.mSize / 2), (int)this.mSize, (int)this.mSize);
-            
+            mSource = new Rectangle(0, 0, (int)mSize, (int)mSize);
             sb.Draw(texture, destination, mSource, Color.White);
         }
 
