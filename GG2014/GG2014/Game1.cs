@@ -74,7 +74,6 @@ namespace GG2014
             {
                 AnimationTime -= 2.0f;
                 ListObject.Add(new Object(C1.getStart().X-10,C1.getStart().Y-10,C1.getVectorDir()));
-                System.Console.WriteLine("prpout");
             }
 
             for (int i = 0; i< ListObject.Count-1; i++)
