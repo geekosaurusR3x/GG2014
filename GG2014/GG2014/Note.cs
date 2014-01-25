@@ -24,6 +24,7 @@ namespace GG2014
             textures[0]=tex1;
             textures[1]=tex2;
             textures[2]=tex3;
+            this.setSize(32);
         }
 
         public int vie 

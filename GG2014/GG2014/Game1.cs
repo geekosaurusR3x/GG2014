@@ -21,9 +21,11 @@ namespace GG2014
         int idNoteCorde;
         Corde[] cordes;
         List<Enemis> ListObject;
+        bool touche_down;
 
         Note note;
-        double AnimationTime;
+        double EnemiTime;
+        double TouchTime;
         
 
         public Game1()
@@ -57,7 +59,8 @@ namespace GG2014
                 cordes[i].genBaseTexture(GraphicsDevice);
             }
  
-            AnimationTime = 0;
+            EnemiTime = 0;
+            TouchTime = 0;
 
             Texture2D tex1, tex2, tex3;
             tex1 = Content.Load<Texture2D>("noire-32");
@@ -65,6 +68,7 @@ namespace GG2014
             tex3 = Content.Load<Texture2D>("triple-croche-32");
             note = new Note(0, 0, tex1, tex2, tex3,3);
             idNoteCorde = 1;
+            touche_down = false;
         }
 
 
@@ -76,13 +80,20 @@ namespace GG2014
         protected override void Update(GameTime gameTime)
         {
             double time = gameTime.ElapsedGameTime.TotalSeconds;
-            AnimationTime += time;
-            if (AnimationTime > 2.0f)
+            EnemiTime += time;
+            TouchTime += time;
+            if (EnemiTime > 2.0f)
             {
-                AnimationTime -= 2.0f;
+                EnemiTime -= 2.0f;
                 Enemis temp = new Enemis(cordes[0].getStart().X - 10, cordes[0].getStart().Y - 10, cordes[0].getVectorDir());
                 temp.genBaseTexture(GraphicsDevice);
                 ListObject.Add(temp);
+            }
+
+            if (TouchTime > 0.3f)
+            {
+                TouchTime -= 0.3f;
+                touche_down = false;
             }
 
             for (int i = 0; i< ListObject.Count-1; i++)
@@ -94,14 +105,15 @@ namespace GG2014
                 }
                 else
                 {
-                    Enemis temp = new Enemis((temp2.getPos().X + (temp2.getDir().X / 5)), (temp2.getPos().Y + (temp2.getDir().Y / 5)), temp2.getDir());
+                    Enemis temp = new Enemis((temp2.getPos().X + (temp2.getDir().X / 1)), (temp2.getPos().Y + (temp2.getDir().Y / 1)), temp2.getDir());
                     temp.genBaseTexture(GraphicsDevice);
-                    temp.setSize(temp2.getSize()+0.1);
+                    temp.setSize(temp2.getSize()+0.3);
                     ListObject[i] = temp;
                 }
+                System.Console.WriteLine(ListObject.Count);
             }
 
-            if (Keyboard.GetState().IsKeyDown(Keys.Left))
+            if (Keyboard.GetState().IsKeyDown(Keys.Left) && !touche_down)
             {
                 if (idNoteCorde == 0)
                 {
@@ -111,9 +123,10 @@ namespace GG2014
                 {
                     idNoteCorde--;
                 }
+                touche_down = true;
             }
 
-            if (Keyboard.GetState().IsKeyDown(Keys.Right))
+            if (Keyboard.GetState().IsKeyDown(Keys.Right) && !touche_down)
             {
                 if (idNoteCorde == 3)
                 {
@@ -123,8 +136,10 @@ namespace GG2014
                 {
                     idNoteCorde++;
                 }
+                touche_down = true;
             }
-            note.setPosition((int)cordes[idNoteCorde].getEnd().X, (int)cordes[idNoteCorde].getEnd().Y);
+
+            note.setPosition(cordes[idNoteCorde].getEnd().X, cordes[idNoteCorde].getEnd().Y);
                     
       
             base.Update(gameTime);

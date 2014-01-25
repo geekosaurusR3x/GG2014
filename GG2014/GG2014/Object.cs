@@ -21,9 +21,8 @@ namespace GG2014
 
         public Object(float x, float y)
         {
-            mSize = 20;
-            mPos.X = x;
-            mPos.Y = y;
+            mSize = 32;
+            this.setPosition(x, y);
             mSource = new Rectangle(0, 0, 32, 32);
         }
 
@@ -43,10 +42,10 @@ namespace GG2014
             return mPos;
         }
 
-        public void setPosition(int x, int y)
+        public void setPosition(float x, float y)
         {
-            this.mPos.X = x - 16;
-            this.mPos.Y = y - 16;
+            this.mPos.X = x;
+            this.mPos.Y = y;
         }
 
         public double getSize()
@@ -65,7 +64,7 @@ namespace GG2014
             {
                 texture = mTexture;
             }
-            Rectangle destination = new Rectangle((int)this.getPos().X, (int)this.getPos().Y, (int)this.mSize, (int)this.mSize);
+            Rectangle destination = new Rectangle((int)this.getPos().X - ((int)this.mSize / 2), (int)this.getPos().Y - (int)this.mSize, (int)this.mSize, (int)this.mSize);
             sb.Draw(texture, destination, mSource, Color.White);
         }
 
