@@ -26,8 +26,8 @@ namespace GG2014
             textures[0]=tex1;
             textures[1]=tex2;
             textures[2]=tex3;
-            source = new Rectangle(0, 0, 1280, 1024);
-            destination = new Rectangle(0,0, 1280, 1024);
+            source = new Rectangle(0, 0, 32, 32);
+            destination = new Rectangle(x,y, 32, 32);
             
         }
 
@@ -37,15 +37,28 @@ namespace GG2014
             set { _vie = value; }
         }
 
-        void setPosition(int x, int y)
+        public int X
         {
-            this.x = x;
-            this.y = y;
+            get { return x; }
+            set { x = value; }
+        }
+
+        public int Y
+        {
+            get { return y; }
+            set { y = value; }
+        }
+        public void setPosition(int x, int y)
+        {
+            this.x = x-90;
+            this.y = y-100;
+            destination = new Rectangle(this.x, this.y, 32, 32);
         }
 
         public void Draw(SpriteBatch sb)
         {
             sb.Draw(textures[_vie-1], destination, source, Color.White);
+            System.Console.WriteLine(destination);
         }
     }
 }

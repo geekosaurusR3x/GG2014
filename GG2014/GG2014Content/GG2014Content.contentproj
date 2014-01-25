@@ -42,18 +42,18 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="double-croche.png">
-      <Name>double-croche</Name>
+    <Compile Include="double-croche-32.png">
+      <Name>double-croche-32</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="noir.png">
-      <Name>noir</Name>
+    <Compile Include="noire-32.png">
+      <Name>noire-32</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="triple-croche.png">
-      <Name>triple-croche</Name>
+    <Compile Include="triple-croche-32.png">
+      <Name>triple-croche-32</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

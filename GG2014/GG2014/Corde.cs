@@ -14,6 +14,7 @@ namespace GG2014
 {
     class Corde
     {
+
         Vector2 mStart;
         Vector2 mEnd;
 

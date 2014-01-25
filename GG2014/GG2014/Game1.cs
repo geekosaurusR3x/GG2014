@@ -18,11 +18,13 @@ namespace GG2014
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
-        Texture2D TextureCorde; 
-        Corde C1;
-        Corde C2;
-        Corde C3;
-        Corde C4;
+        Texture2D TextureCorde;
+        int idNoteCorde;
+        Corde[] cordes;
+        //Corde C1;
+        //Corde C2;
+        //Corde C3;
+        //Corde C4;
         List<Object> ListObject;
 
         Note note;
@@ -37,7 +39,10 @@ namespace GG2014
 
         protected override void Initialize()
         {
+            graphics.PreferredBackBufferWidth = 800;
+            graphics.PreferredBackBufferHeight = 600;
 
+            graphics.ApplyChanges();
             base.Initialize();
         }
 
@@ -47,17 +52,20 @@ namespace GG2014
             TextureCorde = new Texture2D(GraphicsDevice, 1, 1);
             TextureCorde.SetData<Color>(new Color[] { Color.White });
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            C1 = new Corde(350, 300, 100, 600);
-            C2 = new Corde(385, 300, 300, 600);
-            C3 = new Corde(415, 300, 500, 600);
-            C4 = new Corde(450, 300, 700, 600);
+            cordes = new Corde[4];
+            cordes[0]=new Corde(350, 300, 100, 600);
+            cordes[1]=new Corde(385, 300, 300, 600);
+            cordes[2]=new Corde(415, 300, 500, 600);
+            cordes[3]=new Corde(450, 300, 700, 600);
+             
             AnimationTime = 0;
 
             Texture2D tex1, tex2, tex3;
-            tex1 = Content.Load<Texture2D>("noir");
-            tex2 = Content.Load<Texture2D>("double-croche");
-            tex3 = Content.Load<Texture2D>("triple-croche");
+            tex1 = Content.Load<Texture2D>("noire-32");
+            tex2 = Content.Load<Texture2D>("double-croche-32");
+            tex3 = Content.Load<Texture2D>("triple-croche-32");
             note = new Note(0, 0, tex1, tex2, tex3,3);
+            idNoteCorde = 1;
         }
 
 
@@ -73,7 +81,12 @@ namespace GG2014
             if (AnimationTime > 2.0f)
             {
                 AnimationTime -= 2.0f;
+<<<<<<< HEAD
                 ListObject.Add(new Object(C1.getStart().X-10,C1.getStart().Y-10,C1.getVectorDir()));
+=======
+                ListObject.Add(new Object(cordes[0].getStart().X - 10, cordes[0].getStart().Y - 10, cordes[0].getVectorDir()));
+                System.Console.WriteLine("prpout");
+>>>>>>> e0c6bf114dd67e3f7fec0580a243b73d2034d87d
             }
 
             for (int i = 0; i< ListObject.Count-1; i++)
@@ -90,6 +103,37 @@ namespace GG2014
                     ListObject[i] = temp;
                 }
             }
+
+            if (Keyboard.GetState().IsKeyDown(Keys.Left))
+            {
+                if (idNoteCorde == 0)
+                {
+                    //game over
+                }
+                else
+                {
+                    idNoteCorde--;
+                    
+            note.setPosition((int)cordes[idNoteCorde].getEnd().X, (int) cordes[idNoteCorde].getEnd().Y);
+           
+                }
+            }
+
+            if (Keyboard.GetState().IsKeyDown(Keys.Right))
+            {
+                if (idNoteCorde == 3)
+                {
+                    //game over
+                }
+                else 
+                {
+                    idNoteCorde++;
+                    note.setPosition((int)cordes[idNoteCorde].getEnd().X, (int)cordes[idNoteCorde].getEnd().Y);
+                }
+            }
+            System.Console.WriteLine((int)cordes[idNoteCorde].getEnd().Y);
+                    
+      
             base.Update(gameTime);
         }
 
@@ -98,10 +142,10 @@ namespace GG2014
             GraphicsDevice.Clear(Color.CornflowerBlue);
             spriteBatch.Begin();
             note.Draw(spriteBatch);
-            DrawLine(spriteBatch, C1.getStart(), C1.getEnd());
-            DrawLine(spriteBatch, C2.getStart(), C2.getEnd());
-            DrawLine(spriteBatch, C3.getStart(), C3.getEnd());
-            DrawLine(spriteBatch, C4.getStart(), C4.getEnd());
+            DrawLine(spriteBatch, cordes[0].getStart(), cordes[0].getEnd());
+            DrawLine(spriteBatch, cordes[1].getStart(), cordes[1].getEnd());
+            DrawLine(spriteBatch, cordes[2].getStart(), cordes[2].getEnd());
+            DrawLine(spriteBatch, cordes[3].getStart(), cordes[3].getEnd());
 
             for (int i = 0; i < ListObject.Count - 1; i++)
             {
