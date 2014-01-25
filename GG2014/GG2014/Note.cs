@@ -15,6 +15,7 @@ namespace GG2014
     {
         private int mVie;
         private Texture2D[] textures;
+        float angle;
         
         public Note(int x,int y,Texture2D tex1,Texture2D tex2,Texture2D tex3,int nbVie=3): base(x,y)
         {
@@ -24,6 +25,7 @@ namespace GG2014
             textures[1]=tex2;
             textures[2]=tex3;
             this.setSize(32);
+            this.angle = MathHelper.PiOver2;
         }
 
         public int vie 
@@ -35,7 +37,35 @@ namespace GG2014
 
         public void Draw(SpriteBatch sb)
         {
-            base.Draw(sb, textures[mVie - 1]);
+            Vector2 center = new Vector2((float)this.getSize() / 2, (float)this.getSize());
+            Rectangle destination = new Rectangle((int)this.getPos().X, (int)this.getPos().Y, (int)this.getSize(), (int)this.getSize());
+
+            sb.Draw(textures[mVie - 1], destination, this.getSource(), Color.White, angle - MathHelper.PiOver2, center, SpriteEffects.None, 0);
+        }
+
+        public void increaseAngle()
+        {
+            angle += 0.1f;
+            if (angle > MathHelper.TwoPi)
+            {
+                angle = 0;
+            }
+
+        }
+
+        public void decreaseAngle()
+        {
+            angle -= 0.1f;
+            if (angle < 0)
+            {
+                angle = MathHelper.TwoPi;
+            }
+
+        }
+
+        public double getAngle()
+        {
+            return this.angle;
         }
     }
 }

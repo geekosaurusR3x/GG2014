@@ -35,9 +35,9 @@ namespace GG2014
 
         protected override void Initialize()
         {
-            graphics.IsFullScreen = true;
-            graphics.PreferredBackBufferWidth = 1920;
-            graphics.PreferredBackBufferHeight = 1080;
+            graphics.IsFullScreen = false;
+            graphics.PreferredBackBufferWidth = 1380;
+            graphics.PreferredBackBufferHeight = 768;
 
             graphics.ApplyChanges();
             base.Initialize();
@@ -148,6 +148,23 @@ namespace GG2014
                 touche_down = true;
             }
 
+            if (Keyboard.GetState().IsKeyDown(Keys.Space) && !touche_down)
+            {
+                if (note.getAngle() <= MathHelper.PiOver4)
+                {
+                    idNoteCorde++;
+                }
+                else if (note.getAngle() >= 3*MathHelper.PiOver4)
+                {
+                    idNoteCorde--;
+                }
+                touche_down = true;
+            }
+
+            if(idNoteCorde <0 || idNoteCorde >3)
+            {
+                System.Environment.Exit(0);
+            }
             note.setPosition(cordes[idNoteCorde].getEnd().X, cordes[idNoteCorde].getEnd().Y);
                     
       
