@@ -18,7 +18,6 @@ namespace GG2014
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
-        Texture2D TextureCorde;
         int idNoteCorde;
         Corde[] cordes;
         List<Enemis> ListObject;
@@ -45,15 +44,19 @@ namespace GG2014
         protected override void LoadContent()
         {
             ListObject = new List<Enemis>();
-            TextureCorde = new Texture2D(GraphicsDevice, 1, 1);
-            TextureCorde.SetData<Color>(new Color[] { Color.White });
             spriteBatch = new SpriteBatch(GraphicsDevice);
+            
             cordes = new Corde[4];
             cordes[0]=new Corde(350, 300, 100, 600);
             cordes[1]=new Corde(385, 300, 300, 600);
             cordes[2]=new Corde(415, 300, 500, 600);
             cordes[3]=new Corde(450, 300, 700, 600);
-             
+            
+            for (int i = 0; i <= 3; i++)
+            {
+                cordes[i].genBaseTexture(GraphicsDevice);
+            }
+ 
             AnimationTime = 0;
 
             Texture2D tex1, tex2, tex3;
@@ -77,7 +80,9 @@ namespace GG2014
             if (AnimationTime > 2.0f)
             {
                 AnimationTime -= 2.0f;
-                ListObject.Add(new Enemis(cordes[0].getStart().X - 10, cordes[0].getStart().Y - 10, cordes[0].getVectorDir()));
+                Enemis temp = new Enemis(cordes[0].getStart().X - 10, cordes[0].getStart().Y - 10, cordes[0].getVectorDir());
+                temp.genBaseTexture(GraphicsDevice);
+                ListObject.Add(temp);
             }
 
             for (int i = 0; i< ListObject.Count-1; i++)
@@ -90,6 +95,7 @@ namespace GG2014
                 else
                 {
                     Enemis temp = new Enemis((temp2.getPos().X + (temp2.getDir().X / 5)), (temp2.getPos().Y + (temp2.getDir().Y / 5)), temp2.getDir());
+                    temp.genBaseTexture(GraphicsDevice);
                     temp.setSize(temp2.getSize()+0.1);
                     ListObject[i] = temp;
                 }
@@ -128,46 +134,21 @@ namespace GG2014
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
             spriteBatch.Begin();
+
             note.Draw(spriteBatch);
-            DrawLine(spriteBatch, cordes[0].getStart(), cordes[0].getEnd());
-            DrawLine(spriteBatch, cordes[1].getStart(), cordes[1].getEnd());
-            DrawLine(spriteBatch, cordes[2].getStart(), cordes[2].getEnd());
-            DrawLine(spriteBatch, cordes[3].getStart(), cordes[3].getEnd());
+
+            for (int i = 0; i <= 3; i++)
+            {
+                cordes[i].Draw(spriteBatch);
+            }
 
             for (int i = 0; i < ListObject.Count - 1; i++)
             {
-                ;
-                Texture2D dummyTexture = new Texture2D(GraphicsDevice, 1, 1);
-                dummyTexture.SetData(new Color[] { Color.White });
-                Object temp2 = ListObject[i];
-                Rectangle temp = new Rectangle((int)(temp2.getPos().X),((int)temp2.getPos().Y),(int)temp2.getSize(),(int)temp2.getSize());
-                spriteBatch.Draw(dummyTexture, temp, Color.Black);
+                ListObject[i].Draw(spriteBatch);
             }
 
             spriteBatch.End();
             base.Draw(gameTime);
-        }
-
-        void DrawLine(SpriteBatch sb, Vector2 start, Vector2 end)
-        {
-            Vector2 edge = end - start;
-            // calculate angle to rotate line
-            float angle = (float)Math.Atan2(edge.Y, edge.X);
-
-
-            sb.Draw(TextureCorde,
-                new Rectangle(// rectangle defines shape of line and position of start of line
-                    (int)start.X,
-                    (int)start.Y,
-                    (int)edge.Length(), //sb will strech the texture to fill this rectangle
-                    1), //width of line, change this to make thicker line
-                null,
-                Color.White, //colour of line
-                angle,     //angle of line (calulated above)
-                new Vector2(0, 0), // point in line about which to rotate
-                SpriteEffects.None,
-                0);
-
         }
     }
 }
