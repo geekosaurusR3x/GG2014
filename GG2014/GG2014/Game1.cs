@@ -35,13 +35,9 @@ namespace GG2014
         double EnemiTime;
         double TouchTime;
         double JumpTime;
-<<<<<<< HEAD
         double JumpAngle;
         int last_cord_id;
-=======
         double FallTime;
->>>>>>> bea473dc2734b7fc18c39c8b8e9d29c0f205fe48
-
         GenerateurObjet mRandomProvider;
 
         public Game1()
