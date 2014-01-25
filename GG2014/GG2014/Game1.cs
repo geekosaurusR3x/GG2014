@@ -26,6 +26,8 @@ namespace GG2014
         List<Object> ListObject;
 
         Note note;
+        double AnimationTime;
+        
 
         public Game1()
         {
@@ -49,6 +51,7 @@ namespace GG2014
             C2 = new Corde(385, 300, 300, 600);
             C3 = new Corde(415, 300, 500, 600);
             C4 = new Corde(450, 300, 700, 600);
+            AnimationTime = 0;
 
             Texture2D tex1, tex2, tex3;
             tex1 = Content.Load<Texture2D>("noir");
@@ -66,15 +69,27 @@ namespace GG2014
         protected override void Update(GameTime gameTime)
         {
             double time = gameTime.ElapsedGameTime.TotalSeconds;
-            if (time > 100)
+            AnimationTime += time;
+            if (AnimationTime > 2.0f)
             {
-                ListObject.Add(new Object(C1.getStart().X,C1.getStart().Y,C1.getVectorDir()));
+                AnimationTime -= 2.0f;
+                ListObject.Add(new Object(C1.getStart().X-10,C1.getStart().Y-10,C1.getVectorDir()));
+                System.Console.WriteLine("prpout");
             }
 
             for (int i = 0; i< ListObject.Count-1; i++)
             {
                 Object temp2 = ListObject[i];
-                ListObject[i] = new Object((temp2.getPos().X + temp2.getDir().X), (temp2.getPos().Y + temp2.getDir().Y), temp2.getDir());
+                if (temp2.getPos().Y > 600)
+                {
+                    ListObject.Remove(temp2);
+                }
+                else
+                {
+                    Object temp =  new Object((temp2.getPos().X + (temp2.getDir().X/5)), (temp2.getPos().Y + (temp2.getDir().Y/5)), temp2.getDir());
+                    temp.setSize(temp2.getSize()+0.1);
+                    ListObject[i] = temp;
+                }
             }
             base.Update(gameTime);
         }
@@ -95,7 +110,7 @@ namespace GG2014
                 Texture2D dummyTexture = new Texture2D(GraphicsDevice, 1, 1);
                 dummyTexture.SetData(new Color[] { Color.White });
                 Object temp2 = ListObject[i];
-                Rectangle temp = new Rectangle((int)(temp2.getPos().X),((int)temp2.getPos().Y),(int)(temp2.getPos().X+10),(int)(temp2.getPos().Y+10));
+                Rectangle temp = new Rectangle((int)(temp2.getPos().X),((int)temp2.getPos().Y),(int)temp2.getSize(),(int)temp2.getSize());
                 spriteBatch.Draw(dummyTexture, temp, Color.Black);
             }
 

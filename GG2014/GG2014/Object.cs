@@ -16,14 +16,15 @@ namespace GG2014
     {
         Vector2 mPos;
         Vector2 mDir;
+        double size;
         
 
         public Object(float x, float y, Vector2 dir)
         {
+            size = 20;
             mPos.X = x;
             mPos.Y = y;
-            mDir = dir;
-            
+            mDir = dir;    
         }
 
 
@@ -36,6 +37,18 @@ namespace GG2014
         {
             return mDir;
         }
+
+        public double getSize()
+        {
+            return this.size;
+        }
+
+        public void setSize(double size)
+        {
+           this.size = size;
+        }
+
+
 
     }
 }
