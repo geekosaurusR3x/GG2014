@@ -18,12 +18,14 @@ namespace GG2014
         double mSize;
         Texture2D mTexture;
         Rectangle mSource;
+        float angle;
 
         public Object(float x, float y)
         {
             mSize = 32;
             this.setPosition(x, y);
             mSource = new Rectangle(0, 0, 32, 32);
+            this.angle = MathHelper.PiOver2;
         }
 
         public void genBaseTexture(GraphicsDevice graphic)
@@ -53,6 +55,26 @@ namespace GG2014
             return this.mSize;
         }
 
+        public void increaseAngle()
+        {
+            angle+=0.1f;
+            if (angle > MathHelper.TwoPi)
+            {
+                angle = 0;
+            }
+
+        }
+
+        public void decreaseAngle()
+        {
+            angle-=0.1f;
+            if (angle < 0)
+            {
+                angle = MathHelper.TwoPi;
+            }
+
+        }
+
         public void setSize(double size)
         {
            this.mSize = size;
@@ -64,8 +86,10 @@ namespace GG2014
             {
                 texture = mTexture;
             }
-            Rectangle destination = new Rectangle((int)this.getPos().X - ((int)this.mSize / 2), (int)this.getPos().Y - (int)this.mSize, (int)this.mSize, (int)this.mSize);
-            sb.Draw(texture, destination, mSource, Color.White);
+            Vector2 center = new Vector2((float)this.mSize/2, (float)this.mSize);
+            Rectangle destination = new Rectangle((int)this.getPos().X, (int)this.getPos().Y, (int)this.mSize, (int)this.mSize);
+            
+            sb.Draw(texture, destination, mSource, Color.White, angle - MathHelper.PiOver2, center, SpriteEffects.None, 0 );
         }
 
     }

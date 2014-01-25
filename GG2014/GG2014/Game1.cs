@@ -90,9 +90,9 @@ namespace GG2014
                 ListObject.Add(temp);
             }
 
-            if (TouchTime > 0.3f)
+            if (TouchTime > 0.01f)
             {
-                TouchTime -= 0.3f;
+                TouchTime -= 0.01f;
                 touche_down = false;
             }
 
@@ -121,7 +121,7 @@ namespace GG2014
                 }
                 else
                 {
-                    idNoteCorde--;
+                    note.decreaseAngle();
                 }
                 touche_down = true;
             }
@@ -134,7 +134,7 @@ namespace GG2014
                 }
                 else 
                 {
-                    idNoteCorde++;
+                    note.increaseAngle();
                 }
                 touche_down = true;
             }
@@ -150,8 +150,6 @@ namespace GG2014
             GraphicsDevice.Clear(Color.CornflowerBlue);
             spriteBatch.Begin();
 
-            note.Draw(spriteBatch);
-
             for (int i = 0; i <= 3; i++)
             {
                 cordes[i].Draw(spriteBatch);
@@ -161,6 +159,8 @@ namespace GG2014
             {
                 ListObject[i].Draw(spriteBatch);
             }
+
+            note.Draw(spriteBatch);
 
             spriteBatch.End();
             base.Draw(gameTime);
