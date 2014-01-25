@@ -123,12 +123,6 @@ namespace GG2014
                 touche_down = false;
             }
 
-            //if (JumpTime > 0.5f)
-            //{
-            //    JumpTime -= 0.5f;
-            //    jump_touche_down = false;
-            //}
-
             if (FallTime > 0.5f)
             {
                 FallTime -= 0.5f;
@@ -181,8 +175,6 @@ namespace GG2014
             // CHEAT
             if (kState.IsKeyDown(Keys.RightControl) && kState.IsKeyDown(Keys.OemOpenBrackets))
             {
-                
-                if (note.getAngle() <= MathHelper.PiOver4)
                 note.cheetah();
             }
 
@@ -219,6 +211,7 @@ namespace GG2014
                     note.increaseAngle();
                     if (JumpAngle <= MathHelper.PiOver2)
                     {
+                        note.resetAngle();
                         jump_touche_down = false;
                     }
                 }
@@ -234,6 +227,7 @@ namespace GG2014
                     note.decreaseAngle();
                     if (JumpAngle >= 3*MathHelper.PiOver2)
                     {
+                        note.resetAngle();
                         jump_touche_down = false;
                     }
                 }
