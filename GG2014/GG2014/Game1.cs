@@ -21,11 +21,7 @@ namespace GG2014
         Texture2D TextureCorde;
         int idNoteCorde;
         Corde[] cordes;
-        //Corde C1;
-        //Corde C2;
-        //Corde C3;
-        //Corde C4;
-        List<Object> ListObject;
+        List<Enemis> ListObject;
 
         Note note;
         double AnimationTime;
@@ -48,7 +44,7 @@ namespace GG2014
 
         protected override void LoadContent()
         {
-            ListObject = new List<Object>();
+            ListObject = new List<Enemis>();
             TextureCorde = new Texture2D(GraphicsDevice, 1, 1);
             TextureCorde.SetData<Color>(new Color[] { Color.White });
             spriteBatch = new SpriteBatch(GraphicsDevice);
@@ -81,24 +77,19 @@ namespace GG2014
             if (AnimationTime > 2.0f)
             {
                 AnimationTime -= 2.0f;
-<<<<<<< HEAD
-                ListObject.Add(new Object(C1.getStart().X-10,C1.getStart().Y-10,C1.getVectorDir()));
-=======
-                ListObject.Add(new Object(cordes[0].getStart().X - 10, cordes[0].getStart().Y - 10, cordes[0].getVectorDir()));
-                System.Console.WriteLine("prpout");
->>>>>>> e0c6bf114dd67e3f7fec0580a243b73d2034d87d
+                ListObject.Add(new Enemis(cordes[0].getStart().X - 10, cordes[0].getStart().Y - 10, cordes[0].getVectorDir()));
             }
 
             for (int i = 0; i< ListObject.Count-1; i++)
             {
-                Object temp2 = ListObject[i];
+                Enemis temp2 = ListObject[i];
                 if (temp2.getPos().Y > 600)
                 {
                     ListObject.Remove(temp2);
                 }
                 else
                 {
-                    Object temp =  new Object((temp2.getPos().X + (temp2.getDir().X/5)), (temp2.getPos().Y + (temp2.getDir().Y/5)), temp2.getDir());
+                    Enemis temp = new Enemis((temp2.getPos().X + (temp2.getDir().X / 5)), (temp2.getPos().Y + (temp2.getDir().Y / 5)), temp2.getDir());
                     temp.setSize(temp2.getSize()+0.1);
                     ListObject[i] = temp;
                 }
@@ -113,9 +104,6 @@ namespace GG2014
                 else
                 {
                     idNoteCorde--;
-                    
-            note.setPosition((int)cordes[idNoteCorde].getEnd().X, (int) cordes[idNoteCorde].getEnd().Y);
-           
                 }
             }
 
@@ -128,10 +116,9 @@ namespace GG2014
                 else 
                 {
                     idNoteCorde++;
-                    note.setPosition((int)cordes[idNoteCorde].getEnd().X, (int)cordes[idNoteCorde].getEnd().Y);
                 }
             }
-            System.Console.WriteLine((int)cordes[idNoteCorde].getEnd().Y);
+            note.setPosition((int)cordes[idNoteCorde].getEnd().X, (int)cordes[idNoteCorde].getEnd().Y);
                     
       
             base.Update(gameTime);

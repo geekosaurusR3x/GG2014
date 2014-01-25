@@ -16,7 +16,6 @@ namespace GG2014
         private int _vie;
         private Texture2D[] textures;
         private Rectangle source;
-        private Rectangle destination;
         private int x,y;
         
         public Note(int x,int y,Texture2D tex1,Texture2D tex2,Texture2D tex3,int nbVie=3)
@@ -27,7 +26,6 @@ namespace GG2014
             textures[1]=tex2;
             textures[2]=tex3;
             source = new Rectangle(0, 0, 32, 32);
-            destination = new Rectangle(x,y, 32, 32);
             
         }
 
@@ -50,15 +48,14 @@ namespace GG2014
         }
         public void setPosition(int x, int y)
         {
-            this.x = x-90;
-            this.y = y-100;
-            destination = new Rectangle(this.x, this.y, 32, 32);
+            this.x = x-16;
+            this.y = y-16;
         }
 
         public void Draw(SpriteBatch sb)
         {
+            Rectangle destination = new Rectangle(x, y, 32, 32);
             sb.Draw(textures[_vie-1], destination, source, Color.White);
-            System.Console.WriteLine(destination);
         }
     }
 }

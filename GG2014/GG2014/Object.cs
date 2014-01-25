@@ -15,27 +15,20 @@ namespace GG2014
     class Object
     {
         Vector2 mPos;
-        Vector2 mDir;
         double size;
         
 
-        public Object(float x, float y, Vector2 dir)
+        public Object(float x, float y)
         {
             size = 20;
             mPos.X = x;
-            mPos.Y = y;
-            mDir = dir;    
+            mPos.Y = y;   
         }
 
 
         public Vector2 getPos()
         {
             return mPos;
-        }
-
-        public Vector2 getDir()
-        {
-            return mDir;
         }
 
         public double getSize()
