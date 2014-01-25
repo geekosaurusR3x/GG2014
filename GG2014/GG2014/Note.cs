@@ -13,13 +13,12 @@ namespace GG2014
 {
     class Note : Object
     {
-        private int _vie;
+        private int mVie;
         private Texture2D[] textures;
-        private Rectangle source;
         
         public Note(int x,int y,Texture2D tex1,Texture2D tex2,Texture2D tex3,int nbVie=3): base(x,y)
         {
-            this._vie = nbVie;
+            this.mVie = nbVie;
             this.textures = new Texture2D[nbVie];
             textures[0]=tex1;
             textures[1]=tex2;
@@ -29,14 +28,14 @@ namespace GG2014
 
         public int vie 
         {
-            get{return _vie;}
-            set { _vie = value; }
+            get{return mVie;}
+            set { mVie = value; }
         }
 
 
         public void Draw(SpriteBatch sb)
         {
-            base.Draw(sb, textures[_vie - 1]);
+            base.Draw(sb, textures[mVie - 1]);
         }
     }
 }
