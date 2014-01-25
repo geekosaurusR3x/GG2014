@@ -32,7 +32,9 @@ namespace GG2014
         double EnemiTime;
         double TouchTime;
         double JumpTime;
-        
+
+        GenerateurObjet mRandomProvider;
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -70,23 +72,18 @@ namespace GG2014
             EnemiTime = 0;
             TouchTime = 0;
             JumpTime = 0;
-
+            mRandomProvider = new GenerateurObjet();
             Texture2D tex1, tex2, tex3;
             tex1 = Content.Load<Texture2D>("noire-32");
             tex2 = Content.Load<Texture2D>("double-croche-32");
             tex3 = Content.Load<Texture2D>("triple-croche-32");
-            tex_ennemy_leaf = Content.Load<Texture2D>("leaf-128");
+            tex_ennemy_leaf = Content.Load<Texture2D>("leaf-32");
             note = new Note(0, 0, tex1, tex2, tex3, 3);
             idNoteCorde = 1;
             touche_down = false;
-<<<<<<< HEAD
-
             vent = new Vent(0, 0, tex1);
-=======
             jump_touche_down = false;
->>>>>>> af01c4ef9a52ee28d96e80c8f552400a940d3f9a
         }
-
 
         protected override void UnloadContent()
         {
@@ -103,8 +100,9 @@ namespace GG2014
             if (EnemiTime > 2.0f)
             {
                 EnemiTime -= 2.0f;
-                Enemis temp = new Enemis(cordes[0].getStart().X - 10, cordes[0].getStart().Y - 10, cordes[0].getVectorDir());
-                temp.setSize(128.0);
+                int cordId = mRandomProvider.getCorde();
+                Enemis temp = new Enemis(cordes[cordId].getStart().X, cordes[cordId].getStart().Y, cordes[cordId].getVectorDir());
+                temp.setSize(32);
                 temp.setTexture(tex_ennemy_leaf);
                 ListObject.Add(temp);
             }
@@ -208,7 +206,7 @@ namespace GG2014
             }
 
             note.Draw(spriteBatch);
-            vent.Draw(spriteBatch);
+            // vent.Draw(spriteBatch);
             spriteBatch.End();
             base.Draw(gameTime);
         }
