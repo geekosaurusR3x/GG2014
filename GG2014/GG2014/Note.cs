@@ -73,9 +73,19 @@ namespace GG2014
             mVie--;
         }
 
+        public void cheetah()
+        {
+            mVie = 3;
+        }
+
+        public void resetAngle()
+        {
+            this.angle = MathHelper.PiOver2;
+        }
+
         public double getAngle()
         {
             return this.angle;
-            }
+        }
     }
 }
