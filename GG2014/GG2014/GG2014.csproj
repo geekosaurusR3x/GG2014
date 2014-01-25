@@ -108,11 +108,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Corde.cs" />
+    <Compile Include="Feuille.cs" />
+    <Compile Include="GenerateurObjet.cs" />
     <Compile Include="Note.cs" />
     <Compile Include="Object.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Game1.cs" />
+    <Compile Include="Vent.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Game.ico" />
