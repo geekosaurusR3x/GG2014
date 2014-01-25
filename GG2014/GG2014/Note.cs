@@ -66,6 +66,6 @@ namespace GG2014
         public double getAngle()
         {
             return this.angle;
-        }
+            }
     }
 }

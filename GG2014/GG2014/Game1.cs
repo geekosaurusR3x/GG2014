@@ -93,9 +93,9 @@ namespace GG2014
                 ListObject.Add(temp);
             }
 
-            if (TouchTime > 0.01f)
+            if (TouchTime > 0.05f)
             {
-                TouchTime -= 0.01f;
+                TouchTime -= 0.05f;
                 touche_down = false;
             }
 
@@ -152,11 +152,11 @@ namespace GG2014
             {
                 if (note.getAngle() <= MathHelper.PiOver4)
                 {
-                    idNoteCorde++;
+                    idNoteCorde--;
                 }
                 else if (note.getAngle() >= 3*MathHelper.PiOver4)
                 {
-                    idNoteCorde--;
+                    idNoteCorde++;
                 }
                 touche_down = true;
             }
