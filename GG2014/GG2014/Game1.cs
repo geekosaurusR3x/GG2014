@@ -27,6 +27,7 @@ namespace GG2014
         bool jump_touche_down;
         bool fall_touche_down;
         Texture2D tex_ennemy_leaf;
+        int xi = 1380;
         Texture2D tex_background;
 
         Vent vent;
@@ -47,8 +48,8 @@ namespace GG2014
         protected override void Initialize()
         {
             graphics.IsFullScreen = false;
-            graphics.PreferredBackBufferWidth = 1380;
-            graphics.PreferredBackBufferHeight = 768;
+            graphics.PreferredBackBufferWidth = 800;
+            graphics.PreferredBackBufferHeight = 600;
             graphics.ApplyChanges();
             base.Initialize();
         }
@@ -85,9 +86,8 @@ namespace GG2014
             note = new Note(0, 0, tex1, tex2, tex3, 3);
             idNoteCorde = 1;
             touche_down = false;
+            vent = new Vent(0, 0, Content.Load<Texture2D>("cloud"),-1);
             jump_touche_down = false;
-            fall_touche_down = false;
-            vent = new Vent(0, 0, tex1);
         }
 
         protected override void UnloadContent()
@@ -97,7 +97,8 @@ namespace GG2014
 
         protected override void Update(GameTime gameTime)
         {
-            
+            vent.setPosition(xi, 0);
+            xi--;
             double time = gameTime.ElapsedGameTime.TotalSeconds;
             EnemiTime += time;
             TouchTime += time;
