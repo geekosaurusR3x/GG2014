@@ -15,40 +15,58 @@ namespace GG2014
     class Object
     {
         Vector2 mPos;
-        Vector2 mDir;
-        double size;
-        
+        double mSize;
+        Texture2D mTexture;
+        Rectangle mSource;
 
-        public Object(float x, float y, Vector2 dir)
+        public Object(float x, float y)
         {
-            size = 20;
-            mPos.X = x;
-            mPos.Y = y;
-            mDir = dir;    
+            mSize = 32;
+            this.setPosition(x, y);
+            mSource = new Rectangle(0, 0, 32, 32);
         }
 
+        public void genBaseTexture(GraphicsDevice graphic)
+        {
+            //definition d'une texture toute pourie
+            mTexture = new Texture2D(graphic, 1, 1);
+            mTexture.SetData(new Color[] { Color.White });
+        }
 
+        public Texture2D getBaseTexture()
+        {
+            return mTexture;
+        }
         public Vector2 getPos()
         {
             return mPos;
         }
 
-        public Vector2 getDir()
+        public void setPosition(float x, float y)
         {
-            return mDir;
+            this.mPos.X = x;
+            this.mPos.Y = y;
         }
 
         public double getSize()
         {
-            return this.size;
+            return this.mSize;
         }
 
         public void setSize(double size)
         {
-           this.size = size;
+           this.mSize = size;
         }
 
-
+        public void Draw(SpriteBatch sb,Texture2D texture = null)
+        {
+            if (texture == null)
+            {
+                texture = mTexture;
+            }
+            Rectangle destination = new Rectangle((int)this.getPos().X - ((int)this.mSize / 2), (int)this.getPos().Y - (int)this.mSize, (int)this.mSize, (int)this.mSize);
+            sb.Draw(texture, destination, mSource, Color.White);
+        }
 
     }
 }

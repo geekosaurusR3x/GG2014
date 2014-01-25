@@ -18,19 +18,15 @@ namespace GG2014
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
-        Texture2D TextureCorde;
         int idNoteCorde;
         Corde[] cordes;
-        //Corde C1;
-        //Corde C2;
-        //Corde C3;
-        //Corde C4;
-        List<Object> ListObject;
+        List<Enemis> ListObject;
+        bool touche_down;
 
         Note note;
-        double AnimationTime;
+        double EnemiTime;
+        double TouchTime;
         
-
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -39,8 +35,9 @@ namespace GG2014
 
         protected override void Initialize()
         {
-            graphics.PreferredBackBufferWidth = 800;
-            graphics.PreferredBackBufferHeight = 650;
+            graphics.IsFullScreen = true;
+            graphics.PreferredBackBufferWidth = 1920;
+            graphics.PreferredBackBufferHeight = 1080;
 
             graphics.ApplyChanges();
             base.Initialize();
@@ -48,25 +45,33 @@ namespace GG2014
 
         protected override void LoadContent()
         {
-            ListObject = new List<Object>();
-            TextureCorde = new Texture2D(GraphicsDevice, 1, 1);
-            TextureCorde.SetData<Color>(new Color[] { Color.White });
+            ListObject = new List<Enemis>();
             spriteBatch = new SpriteBatch(GraphicsDevice);
+            
             cordes = new Corde[4];
-            cordes[0]=new Corde(350, 300, 100, 600);
-            cordes[1]=new Corde(385, 300, 300, 600);
-            cordes[2]=new Corde(415, 300, 500, 600);
-            cordes[3]=new Corde(450, 300, 700, 600);
-             
-            AnimationTime = 0;
+            int w = GraphicsDevice.Viewport.Bounds.Width;
+            int h = GraphicsDevice.Viewport.Bounds.Height;
+
+            cordes[0] = new Corde((int)(w / 3), h / 16, w / 8, h - h / 16);
+            cordes[1] = new Corde((int)(w / 2.1), h / 16, w / 3, h - h / 16);
+            cordes[2] = new Corde((int)(w - (w / 2.1)), h / 16, w - (w / 3), h - h / 16);
+            cordes[3] = new Corde((int)(w - (w / 3)), h / 16, w - (w / 8), h - h / 16);
+            
+            for (int i = 0; i <= 3; i++)
+            {
+                cordes[i].genBaseTexture(GraphicsDevice);
+            }
+ 
+            EnemiTime = 0;
+            TouchTime = 0;
 
             Texture2D tex1, tex2, tex3;
             tex1 = Content.Load<Texture2D>("noire-32");
             tex2 = Content.Load<Texture2D>("double-croche-32");
             tex3 = Content.Load<Texture2D>("triple-croche-32");
             note = new Note(0, 0, tex1, tex2, tex3,3);
-            note.setPosition((int)cordes[0].getEnd().X, (int)cordes[0].getEnd().Y);
             idNoteCorde = 1;
+            touche_down = false;
         }
 
 
@@ -78,30 +83,46 @@ namespace GG2014
         protected override void Update(GameTime gameTime)
         {
             double time = gameTime.ElapsedGameTime.TotalSeconds;
-            AnimationTime += time;
-            if (AnimationTime > 2.0f)
+            EnemiTime += time;
+            TouchTime += time;
+            if (EnemiTime > 2.0f)
             {
-                AnimationTime -= 2.0f;
-                ListObject.Add(new Object(cordes[0].getStart().X - 10, cordes[0].getStart().Y - 10, cordes[0].getVectorDir()));
-                System.Console.WriteLine("prpout");
+                EnemiTime -= 2.0f;
+                Enemis temp = new Enemis(cordes[0].getStart().X - 10, cordes[0].getStart().Y - 10, cordes[0].getVectorDir());
+                temp.genBaseTexture(GraphicsDevice);
+                ListObject.Add(temp);
+            }
+
+            if (TouchTime > 0.3f)
+            {
+                TouchTime -= 0.3f;
+                touche_down = false;
             }
 
             for (int i = 0; i< ListObject.Count-1; i++)
             {
-                Object temp2 = ListObject[i];
-                if (temp2.getPos().Y > 600)
+                Enemis temp2 = ListObject[i];
+                if (temp2.getPos().Y > graphics.PreferredBackBufferWidth)
                 {
                     ListObject.Remove(temp2);
                 }
                 else
                 {
-                    Object temp =  new Object((temp2.getPos().X + (temp2.getDir().X/5)), (temp2.getPos().Y + (temp2.getDir().Y/5)), temp2.getDir());
-                    temp.setSize(temp2.getSize()+0.1);
+                    Enemis temp = new Enemis((temp2.getPos().X + (temp2.getDir().X / 1)), (temp2.getPos().Y + (temp2.getDir().Y / 1)), temp2.getDir());
+                    temp.genBaseTexture(GraphicsDevice);
+                    temp.setSize(temp2.getSize()+0.3);
                     ListObject[i] = temp;
                 }
+                System.Console.WriteLine(ListObject.Count);
             }
 
-            if (Keyboard.GetState().IsKeyDown(Keys.Left))
+            // GTFO
+            if (Keyboard.GetState().IsKeyDown(Keys.Q) || Keyboard.GetState().IsKeyDown(Keys.Escape))
+            {
+                System.Environment.Exit(0);
+            }
+
+            if (Keyboard.GetState().IsKeyDown(Keys.Left) && !touche_down)
             {
                 if (idNoteCorde == 0)
                 {
@@ -110,13 +131,11 @@ namespace GG2014
                 else
                 {
                     idNoteCorde--;
-                    
-            note.setPosition((int)cordes[idNoteCorde].getEnd().X, (int) cordes[idNoteCorde].getEnd().Y);
-           
                 }
+                touche_down = true;
             }
 
-            if (Keyboard.GetState().IsKeyDown(Keys.Right))
+            if (Keyboard.GetState().IsKeyDown(Keys.Right) && !touche_down)
             {
                 if (idNoteCorde == 3)
                 {
@@ -125,10 +144,11 @@ namespace GG2014
                 else 
                 {
                     idNoteCorde++;
-                    note.setPosition((int)cordes[idNoteCorde].getEnd().X, (int)cordes[idNoteCorde].getEnd().Y);
                 }
+                touche_down = true;
             }
-            System.Console.WriteLine((int)cordes[idNoteCorde].getEnd().Y);
+
+            note.setPosition(cordes[idNoteCorde].getEnd().X, cordes[idNoteCorde].getEnd().Y);
                     
       
             base.Update(gameTime);
@@ -138,46 +158,21 @@ namespace GG2014
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
             spriteBatch.Begin();
+
             note.Draw(spriteBatch);
-            DrawLine(spriteBatch, cordes[0].getStart(), cordes[0].getEnd());
-            DrawLine(spriteBatch, cordes[1].getStart(), cordes[1].getEnd());
-            DrawLine(spriteBatch, cordes[2].getStart(), cordes[2].getEnd());
-            DrawLine(spriteBatch, cordes[3].getStart(), cordes[3].getEnd());
+
+            for (int i = 0; i <= 3; i++)
+            {
+                cordes[i].Draw(spriteBatch);
+            }
 
             for (int i = 0; i < ListObject.Count - 1; i++)
             {
-                ;
-                Texture2D dummyTexture = new Texture2D(GraphicsDevice, 1, 1);
-                dummyTexture.SetData(new Color[] { Color.White });
-                Object temp2 = ListObject[i];
-                Rectangle temp = new Rectangle((int)(temp2.getPos().X),((int)temp2.getPos().Y),(int)temp2.getSize(),(int)temp2.getSize());
-                spriteBatch.Draw(dummyTexture, temp, Color.Black);
+                ListObject[i].Draw(spriteBatch);
             }
 
             spriteBatch.End();
             base.Draw(gameTime);
-        }
-
-        void DrawLine(SpriteBatch sb, Vector2 start, Vector2 end)
-        {
-            Vector2 edge = end - start;
-            // calculate angle to rotate line
-            float angle = (float)Math.Atan2(edge.Y, edge.X);
-
-
-            sb.Draw(TextureCorde,
-                new Rectangle(// rectangle defines shape of line and position of start of line
-                    (int)start.X,
-                    (int)start.Y,
-                    (int)edge.Length(), //sb will strech the texture to fill this rectangle
-                    1), //width of line, change this to make thicker line
-                null,
-                Color.White, //colour of line
-                angle,     //angle of line (calulated above)
-                new Vector2(0, 0), // point in line about which to rotate
-                SpriteEffects.None,
-                0);
-
         }
     }
 }

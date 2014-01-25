@@ -11,54 +11,31 @@ using Microsoft.Xna.Framework.Media;
 
 namespace GG2014
 {
-    class Note
+    class Note : Object
     {
-        private int _vie;
+        private int mVie;
         private Texture2D[] textures;
-        private Rectangle source;
-        private Rectangle destination;
-        private int x,y;
         
-        public Note(int x,int y,Texture2D tex1,Texture2D tex2,Texture2D tex3,int nbVie=3)
+        public Note(int x,int y,Texture2D tex1,Texture2D tex2,Texture2D tex3,int nbVie=3): base(x,y)
         {
-            this._vie = nbVie;
+            this.mVie = nbVie;
             this.textures = new Texture2D[nbVie];
             textures[0]=tex1;
             textures[1]=tex2;
             textures[2]=tex3;
-            source = new Rectangle(0, 0, 32, 32);
-            destination = new Rectangle(x,y, 32, 32);
-            
+            this.setSize(32);
         }
 
         public int vie 
         {
-            get{return _vie;}
-            set { _vie = value; }
+            get{return mVie;}
+            set { mVie = value; }
         }
 
-        public int X
-        {
-            get { return x; }
-            set { x = value; }
-        }
-
-        public int Y
-        {
-            get { return y; }
-            set { y = value; }
-        }
-        public void setPosition(int x, int y)
-        {
-            this.x = x;
-            this.y = y;
-            destination = new Rectangle(this.x, this.y, 32, 32);
-        }
 
         public void Draw(SpriteBatch sb)
         {
-            sb.Draw(textures[_vie-1], destination, source, Color.White);
-            System.Console.WriteLine(destination);
+            base.Draw(sb, textures[mVie - 1]);
         }
     }
 }
