@@ -35,9 +35,9 @@ namespace GG2014
 
         protected override void Initialize()
         {
-            graphics.IsFullScreen = true;
-            graphics.PreferredBackBufferWidth = 1920;
-            graphics.PreferredBackBufferHeight = 1080;
+            graphics.IsFullScreen = false;
+            graphics.PreferredBackBufferWidth = 1380;
+            graphics.PreferredBackBufferHeight = 768;
 
             graphics.ApplyChanges();
             base.Initialize();
@@ -93,9 +93,9 @@ namespace GG2014
                 ListObject.Add(temp);
             }
 
-            if (TouchTime > 0.3f)
+            if (TouchTime > 0.01f)
             {
-                TouchTime -= 0.3f;
+                TouchTime -= 0.01f;
                 touche_down = false;
             }
 
@@ -130,7 +130,7 @@ namespace GG2014
                 }
                 else
                 {
-                    idNoteCorde--;
+                    note.decreaseAngle();
                 }
                 touche_down = true;
             }
@@ -143,11 +143,28 @@ namespace GG2014
                 }
                 else 
                 {
-                    idNoteCorde++;
+                    note.increaseAngle();
                 }
                 touche_down = true;
             }
 
+            if (Keyboard.GetState().IsKeyDown(Keys.Space) && !touche_down)
+            {
+                if (note.getAngle() <= MathHelper.PiOver4)
+                {
+                    idNoteCorde++;
+                }
+                else if (note.getAngle() >= 3*MathHelper.PiOver4)
+                {
+                    idNoteCorde--;
+                }
+                touche_down = true;
+            }
+
+            if(idNoteCorde <0 || idNoteCorde >3)
+            {
+                System.Environment.Exit(0);
+            }
             note.setPosition(cordes[idNoteCorde].getEnd().X, cordes[idNoteCorde].getEnd().Y);
                     
       
@@ -159,8 +176,6 @@ namespace GG2014
             GraphicsDevice.Clear(Color.CornflowerBlue);
             spriteBatch.Begin();
 
-            note.Draw(spriteBatch);
-
             for (int i = 0; i <= 3; i++)
             {
                 cordes[i].Draw(spriteBatch);
@@ -170,6 +185,8 @@ namespace GG2014
             {
                 ListObject[i].Draw(spriteBatch);
             }
+
+            note.Draw(spriteBatch);
 
             spriteBatch.End();
             base.Draw(gameTime);

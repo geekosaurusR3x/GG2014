@@ -58,13 +58,19 @@ namespace GG2014
            this.mSize = size;
         }
 
+        public Rectangle getSource()
+        {
+            return mSource;
+        }
+
         public void Draw(SpriteBatch sb,Texture2D texture = null)
         {
             if (texture == null)
             {
                 texture = mTexture;
             }
-            Rectangle destination = new Rectangle((int)this.getPos().X - ((int)this.mSize / 2), (int)this.getPos().Y - (int)this.mSize, (int)this.mSize, (int)this.mSize);
+            Rectangle destination = new Rectangle((int)this.getPos().X - ((int)this.mSize / 2), (int)this.getPos().Y - ((int)this.mSize / 2), (int)this.mSize, (int)this.mSize);
+            
             sb.Draw(texture, destination, mSource, Color.White);
         }
 
