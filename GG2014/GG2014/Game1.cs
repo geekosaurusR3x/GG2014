@@ -35,12 +35,9 @@ namespace GG2014
         double EnemiTime;
         double TouchTime;
         double JumpTime;
-<<<<<<< HEAD
         double JumpAngle;
         int last_cord_id;
-=======
         double FallTime;
->>>>>>> bea473dc2734b7fc18c39c8b8e9d29c0f205fe48
 
         GenerateurObjet mRandomProvider;
 
@@ -127,12 +124,6 @@ namespace GG2014
                 touche_down = false;
             }
 
-            //if (JumpTime > 0.5f)
-            //{
-            //    JumpTime -= 0.5f;
-            //    jump_touche_down = false;
-            //}
-
             if (FallTime > 0.5f)
             {
                 FallTime -= 0.5f;
@@ -194,13 +185,13 @@ namespace GG2014
             if (kState.IsKeyDown(Keys.Space) && !jump_touche_down)
             {
                 last_cord_id = idNoteCorde;
-                if (angle <= MathHelper.PiOver4)
+                if (angle <= MathHelper.PiOver2-0.2)
                 {
                     idNoteCorde--;
                     JumpAngle = MathHelper.PiOver2;
                     jump_touche_down = true;
                 }
-                else if (angle >= 3 * MathHelper.PiOver4)
+                else if (angle >= MathHelper.PiOver2 + 0.2)
                 {
                     idNoteCorde++;
                     JumpAngle = 3*MathHelper.PiOver2;
