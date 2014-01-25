@@ -27,7 +27,6 @@ namespace GG2014
         double EnemiTime;
         double TouchTime;
         
-
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -36,8 +35,9 @@ namespace GG2014
 
         protected override void Initialize()
         {
-            graphics.PreferredBackBufferWidth = 800;
-            graphics.PreferredBackBufferHeight = 600;
+            graphics.IsFullScreen = true;
+            graphics.PreferredBackBufferWidth = 1920;
+            graphics.PreferredBackBufferHeight = 1080;
 
             graphics.ApplyChanges();
             base.Initialize();
@@ -49,10 +49,13 @@ namespace GG2014
             spriteBatch = new SpriteBatch(GraphicsDevice);
             
             cordes = new Corde[4];
-            cordes[0]=new Corde(350, 300, 100, 600);
-            cordes[1]=new Corde(385, 300, 300, 600);
-            cordes[2]=new Corde(415, 300, 500, 600);
-            cordes[3]=new Corde(450, 300, 700, 600);
+            int w = GraphicsDevice.Viewport.Bounds.Width;
+            int h = GraphicsDevice.Viewport.Bounds.Height;
+
+            cordes[0] = new Corde((int)(w / 3), h / 16, w / 8, h - h / 16);
+            cordes[1] = new Corde((int)(w / 2.1), h / 16, w / 3, h - h / 16);
+            cordes[2] = new Corde((int)(w - (w / 2.1)), h / 16, w - (w / 3), h - h / 16);
+            cordes[3] = new Corde((int)(w - (w / 3)), h / 16, w - (w / 8), h - h / 16);
             
             for (int i = 0; i <= 3; i++)
             {
@@ -99,7 +102,7 @@ namespace GG2014
             for (int i = 0; i< ListObject.Count-1; i++)
             {
                 Enemis temp2 = ListObject[i];
-                if (temp2.getPos().Y > 600)
+                if (temp2.getPos().Y > graphics.PreferredBackBufferWidth)
                 {
                     ListObject.Remove(temp2);
                 }
@@ -111,6 +114,12 @@ namespace GG2014
                     ListObject[i] = temp;
                 }
                 System.Console.WriteLine(ListObject.Count);
+            }
+
+            // GTFO
+            if (Keyboard.GetState().IsKeyDown(Keys.Q) || Keyboard.GetState().IsKeyDown(Keys.Escape))
+            {
+                System.Environment.Exit(0);
             }
 
             if (Keyboard.GetState().IsKeyDown(Keys.Left) && !touche_down)
