@@ -44,8 +44,8 @@ namespace GG2014
         protected override void Initialize()
         {
             graphics.IsFullScreen = false;
-            graphics.PreferredBackBufferWidth = 1380;
-            graphics.PreferredBackBufferHeight = 768;
+            graphics.PreferredBackBufferWidth = 800;
+            graphics.PreferredBackBufferHeight = 600;
             graphics.ApplyChanges();
             base.Initialize();
         }
@@ -82,7 +82,7 @@ namespace GG2014
             idNoteCorde = 1;
             touche_down = false;
             jump_touche_down = false;
-            vent = new Vent(0, 0, tex1);
+            vent = new Vent(0, 0, tex1);      
         }
 
         protected override void UnloadContent()
@@ -131,7 +131,6 @@ namespace GG2014
                     ListObject[i].setPosition((temp2.getPos().X + (temp2.getDir().X / 1)), (temp2.getPos().Y + (temp2.getDir().Y / 1)));
                     ListObject[i].setSize(temp2.getSize());
                 }
-                System.Console.WriteLine(ListObject.Count);
             }
 
             // GTFO
@@ -142,27 +141,14 @@ namespace GG2014
 
             if (Keyboard.GetState().IsKeyDown(Keys.Left) && !touche_down)
             {
-                if (idNoteCorde == 0)
-                {
-                    //game over
-                }
-                else
-                {
-                    note.decreaseAngle();
-                }
+
+                note.decreaseAngle();
                 touche_down = true;
             }
 
             if (Keyboard.GetState().IsKeyDown(Keys.Right) && !touche_down)
             {
-                if (idNoteCorde == 3)
-                {
-                    //game over
-                }
-                else 
-                {
-                    note.increaseAngle();
-                }
+                note.increaseAngle();
                 touche_down = true;
             }
 
