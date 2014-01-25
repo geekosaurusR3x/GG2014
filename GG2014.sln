@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+# Visual C# Express 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GG2014", "GG2014\GG2014\GG2014.csproj", "{41F23521-8D40-4CD0-A18C-D00071D0F6B9}"
 EndProject
-Project("{96E2B04D-8817-42C6-938A-82C39BA4D311}") = "GG2014Content", "GG2014\GG2014Content\GG2014Content.contentproj", "{6F3CC4CF-9260-4FEC-928C-B2FF89C51752}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GG2014Content", "GG2014\GG2014Content\GG2014Content.contentproj", "{6F3CC4CF-9260-4FEC-928C-B2FF89C51752}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
