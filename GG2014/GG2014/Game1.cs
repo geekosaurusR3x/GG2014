@@ -25,6 +25,7 @@ namespace GG2014
         List<Enemis> ListObject;
         bool touche_down;
         bool jump_touche_down;
+        bool fall_touche_down;
         Texture2D tex_ennemy_leaf;
         int xi = 1380;
         Texture2D tex_background;
@@ -34,8 +35,12 @@ namespace GG2014
         double EnemiTime;
         double TouchTime;
         double JumpTime;
+<<<<<<< HEAD
         double JumpAngle;
         int last_cord_id;
+=======
+        double FallTime;
+>>>>>>> bea473dc2734b7fc18c39c8b8e9d29c0f205fe48
 
         GenerateurObjet mRandomProvider;
 
@@ -104,6 +109,8 @@ namespace GG2014
             EnemiTime += time;
             TouchTime += time;
             JumpTime += time;
+            FallTime += time;
+
             if (EnemiTime > 2.0f)
             {
                 EnemiTime -= 2.0f;
@@ -126,6 +133,12 @@ namespace GG2014
             //    jump_touche_down = false;
             //}
 
+            if (FallTime > 0.5f)
+            {
+                FallTime -= 0.5f;
+                fall_touche_down = false;
+            }
+
             for (int i = 0; i < ListObject.Count - 1; i++)
             {
                 Enemis temp2 = ListObject[i];
@@ -142,47 +155,52 @@ namespace GG2014
                 if (temp2.getPos().X >= note.getPos().X - 20 && temp2.getPos().X <= note.getPos().X + 20 && temp2.getPos().Y > note.getPos().Y && !jump_touche_down)
                 {
                     ListObject.Remove(temp2);
-                    if (note.getLivesLeft() > 1)
-                    {
-                        note.kill();
-                    }
-                    else
-                    {
-                        // Game over
-                        System.Console.WriteLine("You got screwed");
-                    }
+                    checkForDeath();
                 }
             }
 
+            // Keyboard functions
+            KeyboardState kState = Keyboard.GetState();
+
             // GTFO
-            if (Keyboard.GetState().IsKeyDown(Keys.Q) || Keyboard.GetState().IsKeyDown(Keys.Escape))
+            if (kState.IsKeyDown(Keys.Q) || Keyboard.GetState().IsKeyDown(Keys.Escape))
             {
                 System.Environment.Exit(0);
             }
 
-            if (Keyboard.GetState().IsKeyDown(Keys.Left) && !touche_down)
+            if (kState.IsKeyDown(Keys.Left) && !touche_down)
             {
-
                 note.decreaseAngle();
                 touche_down = true;
             }
 
-            if (Keyboard.GetState().IsKeyDown(Keys.Right) && !touche_down)
+            if (kState.IsKeyDown(Keys.Right) && !touche_down)
             {
                 note.increaseAngle();
                 touche_down = true;
             }
 
-            if (Keyboard.GetState().IsKeyDown(Keys.Space) && !jump_touche_down)
+            // Keyboard functions
+            Keys[] currentPressedKeys = kState.GetPressedKeys();
+            // CHEAT
+            if (kState.IsKeyDown(Keys.RightControl) && kState.IsKeyDown(Keys.OemOpenBrackets))
+            {
+                
+                if (note.getAngle() <= MathHelper.PiOver4)
+                note.cheetah();
+            }
+
+            double angle = note.getAngle();
+            if (kState.IsKeyDown(Keys.Space) && !jump_touche_down)
             {
                 last_cord_id = idNoteCorde;
-                if (note.getAngle() <= MathHelper.PiOver4)
+                if (angle <= MathHelper.PiOver4)
                 {
                     idNoteCorde--;
                     JumpAngle = MathHelper.PiOver2;
                     jump_touche_down = true;
                 }
-                else if (note.getAngle() >= 3 * MathHelper.PiOver4)
+                else if (angle >= 3 * MathHelper.PiOver4)
                 {
                     idNoteCorde++;
                     JumpAngle = 3*MathHelper.PiOver2;
@@ -224,6 +242,18 @@ namespace GG2014
                     }
                 }
             }
+
+            // Check angle 
+            if (note.getAngle() > MathHelper.Pi && !fall_touche_down && !jump_touche_down)
+            {
+                if (checkForDeath())
+                {
+                    // Readjust angle
+                    note.resetAngle();
+                }
+                fall_touche_down = true;
+            }
+
             if (idNoteCorde < 0 || idNoteCorde > 3)
             {
                 System.Console.WriteLine("GAME OVER (" + idNoteCorde + ")");
@@ -235,7 +265,21 @@ namespace GG2014
             }
 
             base.Update(gameTime);
+        }
 
+        private bool checkForDeath()
+        {
+            if (note.getLivesLeft() > 1)
+            {
+                note.kill();
+                return true;
+            }
+            else
+            {
+                // Game over
+                System.Console.WriteLine("You got screwed");
+            }
+            return false;
         }
 
         protected override void Draw(GameTime gameTime)
