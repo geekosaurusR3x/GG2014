@@ -131,7 +131,23 @@ namespace GG2014
                     ListObject[i].setPosition((temp2.getPos().X + (temp2.getDir().X / 1)), (temp2.getPos().Y + (temp2.getDir().Y / 1)));
                     ListObject[i].setSize(temp2.getSize());
                 }
-                System.Console.WriteLine(ListObject.Count);
+
+                 double eX = ListObject[i].getPos().X;
+                double nX = note.getPos().X;
+
+                if (temp2.getPos().X >= note.getPos().X - 20 && temp2.getPos().X <= note.getPos().X + 20 && temp2.getPos().Y > note.getPos().Y)
+                {
+                    ListObject.Remove(temp2);
+                    if (note.getLivesLeft() > 1)
+                    {
+                        note.kill();
+                    }
+                    else
+                    {   
+                        // Game over
+                        System.Console.WriteLine("You got screwed");
+                    }
+                }
             }
 
             // GTFO
@@ -184,6 +200,7 @@ namespace GG2014
                 System.Console.WriteLine("GAME OVER" + idNoteCorde);
                 System.Environment.Exit(0);
             }
+
             note.setPosition(cordes[idNoteCorde].getEnd().X, cordes[idNoteCorde].getEnd().Y);
 
             base.Update(gameTime);
