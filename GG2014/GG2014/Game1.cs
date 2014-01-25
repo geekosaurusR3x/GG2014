@@ -18,6 +18,7 @@ namespace GG2014
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
+        Texture2D TextureCorde;
 
         public Game1()
         {
@@ -25,48 +26,28 @@ namespace GG2014
             Content.RootDirectory = "Content";
         }
 
-        /// <summary>
-        /// Allows the game to perform any initialization it needs to before starting to run.
-        /// This is where it can query for any required services and load any non-graphic
-        /// related content.  Calling base.Initialize will enumerate through any components
-        /// and initialize them as well.
-        /// </summary>
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
 
             base.Initialize();
         }
 
-        /// <summary>
-        /// LoadContent will be called once per game and is the place to load
-        /// all of your content.
-        /// </summary>
         protected override void LoadContent()
         {
-            // Create a new SpriteBatch, which can be used to draw textures.
+            TextureCorde = new Texture2D(GraphicsDevice, 1, 1);
+            TextureCorde.SetData<Color>(new Color[] { Color.White });
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            // TODO: use this.Content to load your game content here
         }
 
-        /// <summary>
-        /// UnloadContent will be called once per game and is the place to unload
-        /// all content.
-        /// </summary>
+
         protected override void UnloadContent()
         {
             // TODO: Unload any non ContentManager content here
         }
 
-        /// <summary>
-        /// Allows the game to run logic such as updating the world,
-        /// checking for collisions, gathering input, and playing audio.
-        /// </summary>
-        /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            // Allows the game to exit
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 this.Exit();
 
@@ -75,17 +56,35 @@ namespace GG2014
             base.Update(gameTime);
         }
 
-        /// <summary>
-        /// This is called when the game should draw itself.
-        /// </summary>
-        /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
-
-            // TODO: Add your drawing code here
-
+            spriteBatch.Begin();
+            DrawLine(spriteBatch, new Vector2(200, 200),new Vector2(100, 50));
+            spriteBatch.End();
             base.Draw(gameTime);
+        }
+
+        void DrawLine(SpriteBatch sb, Vector2 start, Vector2 end)
+        {
+            Vector2 edge = end - start;
+            // calculate angle to rotate line
+            float angle = (float)Math.Atan2(edge.Y, edge.X);
+
+
+            sb.Draw(TextureCorde,
+                new Rectangle(// rectangle defines shape of line and position of start of line
+                    (int)start.X,
+                    (int)start.Y,
+                    (int)edge.Length(), //sb will strech the texture to fill this rectangle
+                    1), //width of line, change this to make thicker line
+                null,
+                Color.White, //colour of line
+                angle,     //angle of line (calulated above)
+                new Vector2(0, 0), // point in line about which to rotate
+                SpriteEffects.None,
+                0);
+
         }
     }
 }
