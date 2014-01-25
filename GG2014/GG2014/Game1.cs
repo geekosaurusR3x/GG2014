@@ -18,13 +18,14 @@ namespace GG2014
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
-        Texture2D TextureCorde;
+        Texture2D TextureCorde; 
         Corde C1;
         Corde C2;
         Corde C3;
         Corde C4;
         List<Object> ListObject;
-        
+
+        Note note;
 
         public Game1()
         {
@@ -49,6 +50,11 @@ namespace GG2014
             C3 = new Corde(415, 300, 500, 600);
             C4 = new Corde(450, 300, 700, 600);
 
+            Texture2D tex1, tex2, tex3;
+            tex1 = Content.Load<Texture2D>("noir");
+            tex2 = Content.Load<Texture2D>("double-croche");
+            tex3 = Content.Load<Texture2D>("triple-croche");
+            note = new Note(0, 0, tex1, tex2, tex3,3);
         }
 
 
@@ -77,6 +83,7 @@ namespace GG2014
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
             spriteBatch.Begin();
+            note.Draw(spriteBatch);
             DrawLine(spriteBatch, C1.getStart(), C1.getEnd());
             DrawLine(spriteBatch, C2.getStart(), C2.getEnd());
             DrawLine(spriteBatch, C3.getStart(), C3.getEnd());
