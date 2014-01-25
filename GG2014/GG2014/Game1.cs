@@ -81,8 +81,8 @@ namespace GG2014
             note = new Note(0, 0, tex1, tex2, tex3, 3);
             idNoteCorde = 1;
             touche_down = false;
-            vent = new Vent(0, 0, tex1);
             jump_touche_down = false;
+            vent = new Vent(0, 0, tex1);
         }
 
         protected override void UnloadContent()
