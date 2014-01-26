@@ -643,7 +643,7 @@ namespace GG2014
             spriteBatch.DrawString(FontGame, gameover, pos, Color.BlanchedAlmond);
 
             size = Font.MeasureString(remainingTime);
-            pos = new Vector2((w / 2) - (size.X / 2), 80);
+            pos = new Vector2((w / 2) - (size.X / 2), (h / 2) - (size.Y / 2) + 80);
 
             spriteBatch.DrawString(Font, remainingTime, pos, Color.BlanchedAlmond);
         }
