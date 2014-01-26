@@ -60,7 +60,7 @@ namespace GG2014
         SoundEffect swearingSound;
 
         // How long before an ear gets displayed
-        static float endTime = 1.0f;
+        static float endTime = 30.0f;
         // String that is displayed when play fails ("score")
         string remainingTime;
 
@@ -509,7 +509,7 @@ namespace GG2014
                 TouchTime -= 0.5f;
                 touche_down = false;
             }
-
+            
             KeyboardState kState = Keyboard.GetState();
 
             // GTFO
