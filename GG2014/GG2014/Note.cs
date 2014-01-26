@@ -79,6 +79,12 @@ namespace GG2014
             mVie = 3;
         }
 
+        public void reset()
+        {
+            resetAngle();
+            mVie = 3;
+        }
+
         public void resetAngle()
         {
             this.angle = MathHelper.PiOver2;

@@ -380,6 +380,27 @@ namespace GG2014
         {
             // TODO
             System.Console.WriteLine("You made it!");
+            System.Threading.Thread.Sleep(1000);
+            restartGame();
+        }
+
+        private void restartGame()
+        {
+            note.reset();
+            ListObject.Clear();
+            ear = null;
+            EnemiTime = TouchTime = JumpTime = FallTime = EndTime = tip_up_elapsed_time = 0;
+            touche_down = jump_touche_down = fall_touche_down = false;
+            idNoteCorde = 1;
+            Pause = false;
+        }
+
+        private void gameOver()
+        {
+            Pause = true;
+            System.Console.WriteLine("You got screwed");
+            System.Threading.Thread.Sleep(1000);
+            restartGame();
         }
 
         private bool checkForDeath()
@@ -391,8 +412,7 @@ namespace GG2014
             }
             else
             {
-                Pause = true;
-                System.Console.WriteLine("You got screwed");
+                gameOver();
             }
             return false;
         }
