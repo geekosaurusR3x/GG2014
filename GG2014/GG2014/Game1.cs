@@ -51,6 +51,9 @@ namespace GG2014
         GenerateurObjet mRandomProvider;
         double origSize;
 
+        // How long before an ear gets displayed
+        static float endTime = 2.0f;
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -191,20 +194,15 @@ namespace GG2014
             }
 
             // Is it time to display the end? (ear)
-            if (EndTime > 3.0f && ear == null)
+            if (EndTime > endTime && ear == null)
             {
                 ear = new Ear(cordes[cordId].getStart().X, cordes[cordId].getStart().Y, cordes[cordId].getVectorDir());
                 ear.setTexture(tex_ear);
             }
 
-            // Update enemies ears
              if (!Pause) {
                  updateEnnemies();
-                 if (ear != null)
-                 {
-                     ear.setPosition((ear.getPos().X + (ear.getDir().X / 1)), (ear.getPos().Y + (ear.getDir().Y / 1)));
-                 }
-
+                 updateEar();
             }
 
            
@@ -284,6 +282,22 @@ namespace GG2014
                 note.setPosition(cordes[idNoteCorde].getEnd().X, cordes[idNoteCorde].getEnd().Y);
             }
 
+        }
+
+        private void updateEar()
+        {
+            // Update ear
+            if (ear != null)
+            {
+                ear.setPosition((ear.getPos().X + (ear.getDir().X / 1)), (ear.getPos().Y + (ear.getDir().Y / 1)));
+
+                // Collision check
+                if (ear.getPos().X >= ear.getPos().X - 20 && ear.getPos().X <= note.getPos().X + 20 && ear.getPos().Y > note.getPos().Y && !jump_touche_down)
+                {
+                    Pause = true;
+                    epicWin();
+                }
+            }
         }
 
         private void updateEnnemies()
@@ -382,6 +396,33 @@ namespace GG2014
                     jump_touche_down = false;
                 }
             }
+        }
+
+        private void epicWin()
+        {
+            // TODO
+            System.Console.WriteLine("You made it!");
+            System.Threading.Thread.Sleep(1000);
+            restartGame();
+        }
+
+        private void restartGame()
+        {
+            note.reset();
+            ListObject.Clear();
+            ear = null;
+            EnemiTime = TouchTime = JumpTime = FallTime = EndTime = tip_up_elapsed_time = 0;
+            touche_down = jump_touche_down = fall_touche_down = false;
+            idNoteCorde = 1;
+            Pause = false;
+        }
+
+        private void gameOver()
+        {
+            Pause = true;
+            System.Console.WriteLine("You got screwed");
+            System.Threading.Thread.Sleep(1000);
+            restartGame();
         }
 
         private bool checkForDeath()
