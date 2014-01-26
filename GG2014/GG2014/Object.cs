@@ -78,7 +78,7 @@ namespace GG2014
             }
             Rectangle destination = new Rectangle((int)this.getPos().X - ((int)this.mSize / 2), (int)this.getPos().Y - ((int)this.mSize / 2), (int)this.mSize, (int)this.mSize);
             
-            sb.Draw(texture, destination, mSource, Color.White);
+            sb.Draw(texture, destination, Color.White);
         }
     }
 }

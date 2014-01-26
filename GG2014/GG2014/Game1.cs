@@ -30,6 +30,7 @@ namespace GG2014
         int xi = 1380;
         Texture2D tex_background;
         Texture2D tex_ear;
+        float elapsed_time_enemis;
 
         Vent vent;
         Note note;
@@ -38,9 +39,13 @@ namespace GG2014
         double TouchTime;
         double JumpTime;
         double EndTime;
+        double FallTime;
+        double tip_up_elapsed_time;
+
         double JumpAngle;
         int last_cord_id;
-        double FallTime;
+        
+        bool Pause;
         GenerateurObjet mRandomProvider;
 
         public Game1()
@@ -67,10 +72,10 @@ namespace GG2014
             int w = GraphicsDevice.Viewport.Bounds.Width;
             int h = GraphicsDevice.Viewport.Bounds.Height;
 
-            cordes[0] = new Corde((int)(w / 3), h / 3, w / 8, h - h / 16);
-            cordes[1] = new Corde((int)(w / 2.1), h / 3, w / 3, h - h / 16);
-            cordes[2] = new Corde((int)(w - (w / 2.1)), h / 3, w - (w / 3), h - h / 16);
-            cordes[3] = new Corde((int)(w - (w / 3)), h / 3, w - (w / 8), h - h / 16);
+            cordes[0] = new Corde((int)(w / 2), (int)(2*h / 3), w / 6, h - h / 16);
+            cordes[1] = new Corde((int)(w / 2), (int)(2*h / 3), (int)(w / 2.5), h - h / 16);
+            cordes[2] = new Corde((int)(w - (w / 2)), (int)(2 * h / 3), (int)(w - (w / 2.5)), h - h / 16);
+            cordes[3] = new Corde((int)(w - (w / 2)), (int)(2*h / 3), w - (w / 6), h - h / 16);
 
             // Timers
             EndTime = 0;
@@ -78,17 +83,18 @@ namespace GG2014
             TouchTime = 0;
             JumpTime = 0;
             JumpAngle = 0;
-
+            elapsed_time_enemis = 2.0f;
+            tip_up_elapsed_time = 0;
             mRandomProvider = new GenerateurObjet();
 
             // Textures
             Texture2D tex1, tex2, tex3;
-            tex1 = Content.Load<Texture2D>("noire-32");
-            tex2 = Content.Load<Texture2D>("double-croche-32");
-            tex3 = Content.Load<Texture2D>("triple-croche-32");
-            tex_ennemy_leaf = Content.Load<Texture2D>("leaf-32");
+            tex1 = Content.Load<Texture2D>("noire-128");
+            tex2 = Content.Load<Texture2D>("double-croche-128");
+            tex3 = Content.Load<Texture2D>("triple-croche-128");
+            tex_ennemy_leaf = Content.Load<Texture2D>("leaf-128");
             tex_background = Content.Load<Texture2D>("background");
-            tex_ear = Content.Load<Texture2D>("ear-32");
+            tex_ear = Content.Load<Texture2D>("ear-128");
             for (int i = 0; i <= 3; i++)
             {
                 cordes[i].genBaseTexture(GraphicsDevice);
@@ -101,6 +107,7 @@ namespace GG2014
             // Init
             touche_down = false;
             jump_touche_down = false;
+            Pause = false;
         }
 
         protected override void UnloadContent()
@@ -120,27 +127,33 @@ namespace GG2014
             JumpTime += time;
             FallTime += time;
             EndTime += time;
+            tip_up_elapsed_time += time;
 
             // Choose a cord randomly
             int cordId = mRandomProvider.getCorde();
 
             // Is it time to display a new Enemy?
-            if (EnemiTime > 2.0f)
+            if (EnemiTime > elapsed_time_enemis && !Pause)
             {
-                EnemiTime -= 2.0f;
+                EnemiTime -= elapsed_time_enemis;
                 Enemis temp = new Enemis(cordes[cordId].getStart().X, cordes[cordId].getStart().Y, cordes[cordId].getVectorDir());
-                temp.setSize(32);
+                temp.setSize(16);
                 temp.setTexture(tex_ennemy_leaf);
                 ListObject.Add(temp);
             }
 
-            if (TouchTime > 0.05f)
+            if (tip_up_elapsed_time > 10.0f && !Pause)
             {
-                TouchTime -= 0.05f;
+                tip_up_elapsed_time -= 10.0f;
+                elapsed_time_enemis -= 0.1f;
+            }
+            if (TouchTime > 0.01f && !Pause)
+            {
+                TouchTime -= 0.01f;
                 touche_down = false;
             }
 
-            if (FallTime > 0.5f)
+            if (FallTime > 0.5f && !Pause)
             {
                 FallTime -= 0.5f;
                 fall_touche_down = false;
@@ -154,24 +167,24 @@ namespace GG2014
             }
 
             // Update enemies
-            for (int i = 0; i < ListObject.Count - 1; i++)
-            {
-                Enemis temp2 = ListObject[i];
-                if (temp2.getPos().Y > graphics.PreferredBackBufferWidth)
+             if (!Pause) {
+                for (int i = 0; i < ListObject.Count - 1; i++)
                 {
-                    ListObject.Remove(temp2);
-                }
-                else
-                {
-                    ListObject[i].setPosition((temp2.getPos().X + (temp2.getDir().X / 1)), (temp2.getPos().Y + (temp2.getDir().Y / 1)));
-                    ListObject[i].setSize(temp2.getSize());
-                }
-
-                // Collision check
-                if (temp2.getPos().X >= note.getPos().X - 20 && temp2.getPos().X <= note.getPos().X + 20 && temp2.getPos().Y > note.getPos().Y && !jump_touche_down)
-                {
-                    ListObject.Remove(temp2);
-                    checkForDeath();
+                    Enemis temp2 = ListObject[i];
+                    if (temp2.getPos().Y > graphics.PreferredBackBufferWidth)
+                    {
+                        ListObject.Remove(temp2);
+                    }
+                    else
+                    {
+                        ListObject[i].setPosition((temp2.getPos().X + (temp2.getDir().X * 3)), (temp2.getPos().Y + (temp2.getDir().Y * 3)));
+                        ListObject[i].setSize(temp2.getSize() + 0.5f);
+                    }
+                    if (temp2.getPos().X >= note.getPos().X - 20 && temp2.getPos().X <= note.getPos().X + 20 && temp2.getPos().Y > note.getPos().Y && !jump_touche_down)
+                    {
+                        ListObject.Remove(temp2);
+                        checkForDeath();
+                    }
                 }
             }
 
@@ -214,13 +227,13 @@ namespace GG2014
             if (kState.IsKeyDown(Keys.Space) && !jump_touche_down)
             {
                 last_cord_id = idNoteCorde;
-                if (angle <= MathHelper.PiOver4)
+                if (angle <= MathHelper.PiOver2-0.2)
                 {
                     idNoteCorde--;
                     JumpAngle = MathHelper.PiOver2;
                     jump_touche_down = true;
                 }
-                else if (angle >= 3 * MathHelper.PiOver4)
+                else if (angle >= MathHelper.PiOver2 + 0.2)
                 {
                     idNoteCorde++;
                     JumpAngle = 3*MathHelper.PiOver2;
@@ -229,7 +242,7 @@ namespace GG2014
                 
             }
 
-            if (jump_touche_down)
+            if (jump_touche_down && !Pause)
             {
                 if (idNoteCorde > last_cord_id)
                 {
@@ -298,7 +311,7 @@ namespace GG2014
             }
             else
             {
-                // Game over
+                Pause = true;
                 System.Console.WriteLine("You got screwed");
             }
             return false;
@@ -323,10 +336,13 @@ namespace GG2014
                 ListObject[i].Draw(spriteBatch);
             }
 
-            note.Draw(spriteBatch);
             if (ear != null)
             {
                 ear.Draw(spriteBatch);
+            }
+            if (!Pause)
+            {
+                note.Draw(spriteBatch);
             }
             spriteBatch.End();
             base.Draw(gameTime);
