@@ -49,6 +49,9 @@ namespace GG2014
         GenerateurObjet mRandomProvider;
         double origSize;
 
+        // How long before an ear gets displayed
+        static float endTime = 2.0f;
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -168,21 +171,16 @@ namespace GG2014
             }
 
             // Is it time to display the end? (ear)
-            if (EndTime > 3.0f && ear == null)
+            if (EndTime > endTime && ear == null)
             {
                 ear = new Ear(cordes[cordId].getStart().X, cordes[cordId].getStart().Y, cordes[cordId].getVectorDir());
                 ear.setTexture(tex_ear);
             }
 
-            // Update enemies
+            // Update enemies & ear
              if (!Pause) {
                  updateEnnemies();
-            }
-
-            // Update ear
-            if (ear != null)
-            {
-                ear.setPosition((ear.getPos().X + (ear.getDir().X / 1)), (ear.getPos().Y + (ear.getDir().Y / 1)));
+                 updateEar();
             }
 
             // Keyboard functions
@@ -262,6 +260,22 @@ namespace GG2014
             }
 
             base.Update(gameTime);
+        }
+
+        private void updateEar()
+        {
+            // Update ear
+            if (ear != null)
+            {
+                ear.setPosition((ear.getPos().X + (ear.getDir().X / 1)), (ear.getPos().Y + (ear.getDir().Y / 1)));
+
+                // Collision check
+                if (ear.getPos().X >= ear.getPos().X - 20 && ear.getPos().X <= note.getPos().X + 20 && ear.getPos().Y > note.getPos().Y && !jump_touche_down)
+                {
+                    Pause = true;
+                    epicWin();
+                }
+            }
         }
 
         private void updateEnnemies()
@@ -360,6 +374,12 @@ namespace GG2014
                     jump_touche_down = false;
                 }
             }
+        }
+
+        private void epicWin()
+        {
+            // TODO
+            System.Console.WriteLine("You made it!");
         }
 
         private bool checkForDeath()
