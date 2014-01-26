@@ -108,6 +108,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Corde.cs" />
+    <Compile Include="Ear.cs" />
     <Compile Include="Enemis.cs" />
     <Compile Include="GenerateurObjet.cs" />
     <Compile Include="Note.cs" />

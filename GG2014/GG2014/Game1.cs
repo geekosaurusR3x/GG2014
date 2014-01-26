@@ -29,12 +29,15 @@ namespace GG2014
         Texture2D tex_ennemy_leaf;
         int xi = 1380;
         Texture2D tex_background;
+        Texture2D tex_ear;
 
         Vent vent;
         Note note;
+        Ear ear;
         double EnemiTime;
         double TouchTime;
         double JumpTime;
+        double EndTime;
         double JumpAngle;
         int last_cord_id;
         double FallTime;
@@ -69,26 +72,34 @@ namespace GG2014
             cordes[2] = new Corde((int)(w - (w / 2.1)), h / 3, w - (w / 3), h - h / 16);
             cordes[3] = new Corde((int)(w - (w / 3)), h / 3, w - (w / 8), h - h / 16);
 
-            for (int i = 0; i <= 3; i++)
-            {
-                cordes[i].genBaseTexture(GraphicsDevice);
-            }
-
+            // Timers
+            EndTime = 0;
             EnemiTime = 0;
             TouchTime = 0;
             JumpTime = 0;
             JumpAngle = 0;
+
             mRandomProvider = new GenerateurObjet();
+
+            // Textures
             Texture2D tex1, tex2, tex3;
             tex1 = Content.Load<Texture2D>("noire-32");
             tex2 = Content.Load<Texture2D>("double-croche-32");
             tex3 = Content.Load<Texture2D>("triple-croche-32");
             tex_ennemy_leaf = Content.Load<Texture2D>("leaf-32");
             tex_background = Content.Load<Texture2D>("background");
+            tex_ear = Content.Load<Texture2D>("ear-32");
+            for (int i = 0; i <= 3; i++)
+            {
+                cordes[i].genBaseTexture(GraphicsDevice);
+            }
             note = new Note(0, 0, tex1, tex2, tex3, 3);
             idNoteCorde = 1;
-            touche_down = false;
+            
             vent = new Vent(0, 0, Content.Load<Texture2D>("cloud"), -1);
+
+            // Init
+            touche_down = false;
             jump_touche_down = false;
         }
 
@@ -101,16 +112,22 @@ namespace GG2014
         {
             vent.setPosition(xi, 0);
             xi--;
+
+            // Update timers
             double time = gameTime.ElapsedGameTime.TotalSeconds;
             EnemiTime += time;
             TouchTime += time;
             JumpTime += time;
             FallTime += time;
+            EndTime += time;
 
+            // Choose a cord randomly
+            int cordId = mRandomProvider.getCorde();
+
+            // Is it time to display a new Enemy?
             if (EnemiTime > 2.0f)
             {
                 EnemiTime -= 2.0f;
-                int cordId = mRandomProvider.getCorde();
                 Enemis temp = new Enemis(cordes[cordId].getStart().X, cordes[cordId].getStart().Y, cordes[cordId].getVectorDir());
                 temp.setSize(32);
                 temp.setTexture(tex_ennemy_leaf);
@@ -129,6 +146,14 @@ namespace GG2014
                 fall_touche_down = false;
             }
 
+            // Is it time to display the end? (ear)
+            if (EndTime > 3.0f && ear == null)
+            {
+                ear = new Ear(cordes[cordId].getStart().X, cordes[cordId].getStart().Y, cordes[cordId].getVectorDir());
+                ear.setTexture(tex_ear);
+            }
+
+            // Update enemies
             for (int i = 0; i < ListObject.Count - 1; i++)
             {
                 Enemis temp2 = ListObject[i];
@@ -142,11 +167,18 @@ namespace GG2014
                     ListObject[i].setSize(temp2.getSize());
                 }
 
+                // Collision check
                 if (temp2.getPos().X >= note.getPos().X - 20 && temp2.getPos().X <= note.getPos().X + 20 && temp2.getPos().Y > note.getPos().Y && !jump_touche_down)
                 {
                     ListObject.Remove(temp2);
                     checkForDeath();
                 }
+            }
+
+            // Update ear
+            if (ear != null)
+            {
+                ear.setPosition((ear.getPos().X + (ear.getDir().X / 1)), (ear.getPos().Y + (ear.getDir().Y / 1)));
             }
 
             // Keyboard functions
@@ -292,7 +324,10 @@ namespace GG2014
             }
 
             note.Draw(spriteBatch);
-            // vent.Draw(spriteBatch);
+            if (ear != null)
+            {
+                ear.Draw(spriteBatch);
+            }
             spriteBatch.End();
             base.Draw(gameTime);
         }

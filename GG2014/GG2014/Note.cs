@@ -17,7 +17,7 @@ namespace GG2014
         private Texture2D[] textures;
         float angle;
         
-        public Note(int x,int y,Texture2D tex1,Texture2D tex2,Texture2D tex3,int nbVie=3): base(x,y)
+        public Note(float x, float y,Texture2D tex1,Texture2D tex2,Texture2D tex3,int nbVie=3): base(x,y)
         {
             this.mVie = nbVie;
             this.textures = new Texture2D[nbVie];
