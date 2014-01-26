@@ -18,6 +18,9 @@ namespace GG2014
     /// </summary>
     public class Game1 : Microsoft.Xna.Framework.Game
     {
+        enum GameState { GAME_MENU = 0, GAME_OVER, GAME_WIN, GAME_PLAYING, GAME_PAUSED };
+        GameState Etat_game;
+
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         int idNoteCorde;
@@ -47,7 +50,6 @@ namespace GG2014
         int last_cord_id;
         
         bool Pause;
-        int Etat_game;
         GenerateurObjet mRandomProvider;
         double origSize;
 
@@ -64,7 +66,7 @@ namespace GG2014
             touche_down = false;
             jump_touche_down = false;
             Pause = false;
-            Etat_game = 1; //0 menu 1 game 2gameover
+            Etat_game = GameState.GAME_PLAYING;
 
             // Timers
             EndTime = 0;
@@ -143,14 +145,17 @@ namespace GG2014
         {
             switch (Etat_game)
             {
-                case 0:
+                case GameState.GAME_MENU:
                     //DrawMenu(gameTime);
                     break;
-                case 1:
+                case GameState.GAME_PLAYING:
                     UpdateGame(gameTime);
                     break;
-                case 2:
+                case GameState.GAME_OVER:
                     UpdateGameOver(gameTime);
+                    break;
+                case GameState.GAME_WIN:
+                    UpdateGameWin(gameTime);
                     break;
             }
             base.Update(gameTime);
@@ -402,8 +407,7 @@ namespace GG2014
         {
             // TODO
             System.Console.WriteLine("You made it!");
-            System.Threading.Thread.Sleep(1000);
-            restartGame();
+            Etat_game = GameState.GAME_WIN;
         }
 
         private void restartGame()
@@ -414,7 +418,7 @@ namespace GG2014
             EnemiTime = TouchTime = JumpTime = FallTime = EndTime = tip_up_elapsed_time = 0;
             touche_down = jump_touche_down = fall_touche_down = false;
             idNoteCorde = 1;
-            Etat_game = 1;
+            Etat_game = GameState.GAME_PLAYING;
             Pause = false;
         }
 
@@ -436,9 +440,28 @@ namespace GG2014
             else
             {
                 Pause = true;
-                Etat_game = 2;
+                Etat_game = GameState.GAME_OVER;
+                // Delete remaining ennemies
+                ListObject.Clear();
             }
             return false;
+        }
+
+        protected void UpdateGameWin(GameTime gameTime)
+        {
+            KeyboardState kState = Keyboard.GetState();
+
+            // GTFO
+            if (kState.IsKeyDown(Keys.Q) || Keyboard.GetState().IsKeyDown(Keys.Escape))
+            {
+                System.Environment.Exit(0);
+            }
+
+            // Restart
+            if (kState.IsKeyDown(Keys.R))
+            {
+                restartGame();
+            }
         }
 
         protected void UpdateGameOver(GameTime gameTime)
@@ -486,14 +509,17 @@ namespace GG2014
             spriteBatch.Begin();
             switch(Etat_game)
             {
-                case 0:
+                case GameState.GAME_MENU:
                     DrawMenu(gameTime);
                     break;
-                case 1:
+                case GameState.GAME_PLAYING:
                     DrawLevel(gameTime);
                     break;
-                case 2:
+                case GameState.GAME_OVER:
                     DrawEnd(gameTime);
+                    break;
+                case GameState.GAME_WIN:
+                    DrawWin(gameTime);
                     break;
             }
             spriteBatch.End();
@@ -526,6 +552,21 @@ namespace GG2014
                 ear.Draw(spriteBatch);
             }
             note.Draw(spriteBatch);
+        }
+
+        protected void DrawWin(GameTime gameTime)
+        {
+            Rectangle backgroundRectangle = new Rectangle(0, 0, GraphicsDevice.Viewport.Bounds.Width, GraphicsDevice.Viewport.Bounds.Height);
+            spriteBatch.Draw(tex_background, backgroundRectangle, Color.White);
+
+            // TODO Show score or something?
+            string epicWin = string.Format("EPIC WIN");
+            Vector2 size = FontGame.MeasureString(epicWin);
+            int w = GraphicsDevice.Viewport.Bounds.Width;
+            int h = GraphicsDevice.Viewport.Bounds.Height;
+
+            Vector2 pos = new Vector2((w / 2) - (size.X / 2), (h / 2) - (size.Y / 2));
+            spriteBatch.DrawString(FontGame, epicWin, pos, Color.BlanchedAlmond);
         }
 
         protected void DrawEnd(GameTime gameTime)
