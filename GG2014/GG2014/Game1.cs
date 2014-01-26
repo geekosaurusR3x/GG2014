@@ -31,7 +31,8 @@ namespace GG2014
         Texture2D tex_background;
         Texture2D tex_ear;
         float elapsed_time_enemis;
-
+        SpriteFont Font;
+        SpriteFont FontGame;
         Vent vent;
         Note note;
         Ear ear;
@@ -46,6 +47,7 @@ namespace GG2014
         int last_cord_id;
         
         bool Pause;
+        int Etat_game;
         GenerateurObjet mRandomProvider;
         double origSize;
 
@@ -59,6 +61,7 @@ namespace GG2014
             touche_down = false;
             jump_touche_down = false;
             Pause = false;
+            Etat_game = 1; //0 menu 1 game 2gameover
 
             // Timers
             EndTime = 0;
@@ -76,8 +79,8 @@ namespace GG2014
         protected override void Initialize()
         {
             graphics.IsFullScreen = false;
-            graphics.PreferredBackBufferWidth = 800;
-            graphics.PreferredBackBufferHeight = 600;
+            graphics.PreferredBackBufferWidth = 1380;
+            graphics.PreferredBackBufferHeight = 768;
             graphics.ApplyChanges();
             base.Initialize();
         }
@@ -111,6 +114,9 @@ namespace GG2014
             note = new Note(0, 0, tex1, tex2, tex3, 3);
             origSize = note.getSize();
             vent = new Vent(0, 0, Content.Load<Texture2D>("cloud"), -1);
+
+            Font = Content.Load<SpriteFont>("font");
+            FontGame = Content.Load<SpriteFont>("fontGame");
         }
 
         protected override void UnloadContent()
@@ -131,6 +137,23 @@ namespace GG2014
         }
 
         protected override void Update(GameTime gameTime)
+        {
+            switch (Etat_game)
+            {
+                case 0:
+                    //DrawMenu(gameTime);
+                    break;
+                case 1:
+                    UpdateGame(gameTime);
+                    break;
+                case 2:
+                    UpdateGameOver(gameTime);
+                    break;
+            }
+            base.Update(gameTime);
+        }
+
+        protected void UpdateGame(GameTime gameTime)
         {
             updateTimers(gameTime);
 
@@ -174,17 +197,17 @@ namespace GG2014
                 ear.setTexture(tex_ear);
             }
 
-            // Update enemies
+            // Update enemies ears
              if (!Pause) {
                  updateEnnemies();
+                 if (ear != null)
+                 {
+                     ear.setPosition((ear.getPos().X + (ear.getDir().X / 1)), (ear.getPos().Y + (ear.getDir().Y / 1)));
+                 }
+
             }
 
-            // Update ear
-            if (ear != null)
-            {
-                ear.setPosition((ear.getPos().X + (ear.getDir().X / 1)), (ear.getPos().Y + (ear.getDir().Y / 1)));
-            }
-
+           
             // Keyboard functions
             KeyboardState kState = Keyboard.GetState();
 
@@ -261,7 +284,6 @@ namespace GG2014
                 note.setPosition(cordes[idNoteCorde].getEnd().X, cordes[idNoteCorde].getEnd().Y);
             }
 
-            base.Update(gameTime);
         }
 
         private void updateEnnemies()
@@ -372,15 +394,70 @@ namespace GG2014
             else
             {
                 Pause = true;
-                System.Console.WriteLine("You got screwed");
+                Etat_game = 2;
             }
             return false;
+        }
+
+        protected void UpdateGameOver(GameTime gameTime)
+        {
+            // Keyboard functions
+            KeyboardState kState = Keyboard.GetState();
+            Random rand = new Random();
+            int x = rand.Next(0, GraphicsDevice.Viewport.Bounds.Width);
+            int y = -100;
+
+            Enemis temp = new Enemis(x, y, new Vector2(0,1));
+            temp.setSize(64);
+            temp.setTexture(tex_ennemy_leaf);
+            ListObject.Add(temp);
+
+            for (int i = 0; i < ListObject.Count; i++)
+            {
+                if (ListObject[i].getPos().Y > GraphicsDevice.Viewport.Bounds.Height)
+                {
+                    ListObject.Remove(ListObject[i]);
+                }
+                else
+                {
+                    ListObject[i].setPosition((ListObject[i].getPos().X + (ListObject[i].getDir().X * 3)), (ListObject[i].getPos().Y + (ListObject[i].getDir().Y * 3))); ;
+                }
+            }
+
+            // GTFO
+            if (kState.IsKeyDown(Keys.Q) || Keyboard.GetState().IsKeyDown(Keys.Escape))
+            {
+                System.Environment.Exit(0);
+            }
+
         }
 
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
             spriteBatch.Begin();
+            switch(Etat_game)
+            {
+                case 0:
+                    DrawMenu(gameTime);
+                    break;
+                case 1:
+                    DrawLevel(gameTime);
+                    break;
+                case 2:
+                    DrawEnd(gameTime);
+                    break;
+            }
+            spriteBatch.End();
+            base.Draw(gameTime);
+        }
+
+        protected void DrawMenu(GameTime gameTime)
+        {
+        }
+
+        protected void DrawLevel(GameTime gameTime)
+        {
 
             // Background
             Rectangle backgroundRectangle = new Rectangle(0, 0, GraphicsDevice.Viewport.Bounds.Width, GraphicsDevice.Viewport.Bounds.Height);
@@ -400,12 +477,27 @@ namespace GG2014
             {
                 ear.Draw(spriteBatch);
             }
-            if (!Pause)
+            note.Draw(spriteBatch);
+        }
+
+        protected void DrawEnd(GameTime gameTime)
+        {
+            Rectangle backgroundRectangle = new Rectangle(0, 0, GraphicsDevice.Viewport.Bounds.Width, GraphicsDevice.Viewport.Bounds.Height);
+            spriteBatch.Draw(tex_background, backgroundRectangle, Color.White);
+
+
+            for (int i = 0; i < ListObject.Count; i++)
             {
-                note.Draw(spriteBatch);
+                ListObject[i].Draw(spriteBatch);
             }
-            spriteBatch.End();
-            base.Draw(gameTime);
+
+            string gameover = string.Format("GAME OVER");
+            Vector2 size = FontGame.MeasureString(gameover);
+            int w = GraphicsDevice.Viewport.Bounds.Width;
+            int h = GraphicsDevice.Viewport.Bounds.Height;
+
+            Vector2 pos = new Vector2((w / 2) - (size.X / 2), (h / 2) - (size.Y / 2));
+            spriteBatch.DrawString(FontGame, gameover, pos, Color.BlanchedAlmond);
         }
     }
 }
