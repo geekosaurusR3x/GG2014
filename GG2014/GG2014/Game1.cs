@@ -85,9 +85,9 @@ namespace GG2014
             tip_up_elapsed_time = 0;
             mRandomProvider = new GenerateurObjet();
             Texture2D tex1, tex2, tex3;
-            tex1 = Content.Load<Texture2D>("noire-32");
-            tex2 = Content.Load<Texture2D>("double-croche-32");
-            tex3 = Content.Load<Texture2D>("triple-croche-32");
+            tex1 = Content.Load<Texture2D>("noire-128");
+            tex2 = Content.Load<Texture2D>("double-croche-128");
+            tex3 = Content.Load<Texture2D>("triple-croche-128");
             tex_ennemy_leaf = Content.Load<Texture2D>("leaf-128");
             tex_background = Content.Load<Texture2D>("background");
             note = new Note(0, 0, tex1, tex2, tex3, 3);

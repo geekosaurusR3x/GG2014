@@ -37,10 +37,11 @@ namespace GG2014
 
         public void Draw(SpriteBatch sb)
         {
-            Vector2 center = new Vector2((float)this.getSize() / 2, (float)this.getSize());
+            float msize = (float)(this.getSize()/2);
+            Vector2 center = new Vector2((float)this.getSize(), (float)(this.getSize()+msize));
             Rectangle destination = new Rectangle((int)this.getPos().X, (int)this.getPos().Y, (int)this.getSize(), (int)this.getSize());
 
-            sb.Draw(textures[mVie - 1], destination, this.getSource(), Color.White, angle - MathHelper.PiOver2, center, SpriteEffects.None, 0);
+            sb.Draw(textures[mVie - 1], destination, null, Color.White, angle - MathHelper.PiOver2, center,SpriteEffects.None, 0);
         }
 
         public void increaseAngle()
