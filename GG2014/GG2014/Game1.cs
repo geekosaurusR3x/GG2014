@@ -117,7 +117,7 @@ namespace GG2014
             tex1 = Content.Load<Texture2D>("noire-angel-128");
             tex2 = Content.Load<Texture2D>("double-croche-angel-128");
             tex3 = Content.Load<Texture2D>("triple-croche-angel-128");
-            tex_ennemy_leaf = Content.Load<Texture2D>("leaf-128");
+            tex_ennemy_leaf = Content.Load<Texture2D>("double-croche-devil-128");
             tex_background = Content.Load<Texture2D>("background");
             tex_ear = Content.Load<Texture2D>("ear-128");
 
