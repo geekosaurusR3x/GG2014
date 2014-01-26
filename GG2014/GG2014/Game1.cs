@@ -304,7 +304,7 @@ namespace GG2014
                 ear.setPosition((ear.getPos().X + (ear.getDir().X / 1)), (ear.getPos().Y + (ear.getDir().Y / 1)));
                 ear.setSize(ear.getSize() + 0.5f);
                 // Collision check
-                if (ear.getPos().X >= ear.getPos().X - 20 && ear.getPos().X <= note.getPos().X + 20 && ear.getPos().Y > note.getPos().Y && !jump_touche_down)
+                if (ear.getPos().X >= note.getPos().X - 20 && ear.getPos().X <= note.getPos().X + 20 && ear.getPos().Y > note.getPos().Y && !jump_touche_down)
                 {
                     Pause = true;
                     epicWin();
