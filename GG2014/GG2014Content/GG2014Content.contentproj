@@ -157,6 +157,28 @@
   <ItemGroup>
     <Compile Include="font menu.png">
       <Name>font menu</Name>
+	  <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+	   </Compile>
+    <Compile Include="double-croche-angel-128.png">
+      <Name>double-croche-angel-128</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="noire-angel-128.png">
+      <Name>noire-angel-128</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="triple-croche-angel-128.png">
+      <Name>triple-croche-angel-128</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="double-croche-devil-128.png">
+      <Name>double-croche-devil-128</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
