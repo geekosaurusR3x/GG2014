@@ -21,6 +21,7 @@ namespace GG2014
         enum GameState { GAME_MENU = 0, GAME_OVER, GAME_WIN, GAME_PLAYING, GAME_PAUSED };
         GameState Etat_game;
 
+        int menu_state;
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         int idNoteCorde;
@@ -34,6 +35,7 @@ namespace GG2014
         int xi = 1380;
         Texture2D tex_background;
         Texture2D tex_ear;
+        Texture2D tex_menu;
         float elapsed_time_enemis;
         SpriteFont Font;
         SpriteFont FontGame;
@@ -72,7 +74,7 @@ namespace GG2014
             touche_down = false;
             jump_touche_down = false;
             Pause = false;
-            Etat_game = GameState.GAME_PLAYING;
+            Etat_game = GameState.GAME_MENU;
 
             // Timers
             EndTime = 0;
@@ -80,6 +82,7 @@ namespace GG2014
             TouchTime = 0;
             JumpTime = 0;
             JumpAngle = 0;
+            menu_state = 0;
             elapsed_time_enemis = 2.0f;
             tip_up_elapsed_time = 0;
 
@@ -120,6 +123,7 @@ namespace GG2014
             tex_ennemy_leaf = Content.Load<Texture2D>("leaf-128");
             tex_background = Content.Load<Texture2D>("background");
             tex_ear = Content.Load<Texture2D>("ear-128");
+            tex_menu = Content.Load<Texture2D>("font menu");
 
             Musiques[0] = Content.Load<Song>("Mozart - March in D major K.189");
             Musiques[1] = Content.Load<Song>("Mozart - March in D major K.215");
@@ -168,7 +172,7 @@ namespace GG2014
             switch (Etat_game)
             {
                 case GameState.GAME_MENU:
-                    //DrawMenu(gameTime);
+                    UpdateMenu(gameTime);
                     break;
                 case GameState.GAME_PLAYING:
                     UpdateGame(gameTime);
@@ -496,6 +500,54 @@ namespace GG2014
             return false;
         }
 
+        protected void UpdateMenu(GameTime gameTime)
+        {
+            updateTimers(gameTime);
+
+            if (TouchTime > 0.5f)
+            {
+                TouchTime -= 0.5f;
+                touche_down = false;
+            }
+
+            KeyboardState kState = Keyboard.GetState();
+
+            // GTFO
+            if (kState.IsKeyDown(Keys.Up) && !touche_down)
+            {
+                menu_state--;
+                touche_down = true;
+            }
+
+            // Restart
+            if (kState.IsKeyDown(Keys.Down) && !touche_down)
+            {
+                menu_state++;
+                touche_down = true;
+            }
+
+            //enter touch
+            if (kState.IsKeyDown(Keys.Enter))
+            {
+                if (menu_state == 0)
+                {
+                    Etat_game = GameState.GAME_PLAYING;
+                }
+                else
+                {
+                    Environment.Exit(0);
+                }
+            }
+
+            if (menu_state < 0)
+            {
+                menu_state = 1;
+            }
+            else if(menu_state >1)
+            {
+                menu_state = 0;
+            }
+        }
         protected void UpdateGameWin(GameTime gameTime)
         {
             KeyboardState kState = Keyboard.GetState();
@@ -577,7 +629,40 @@ namespace GG2014
 
         protected void DrawMenu(GameTime gameTime)
         {
-            // TODO
+            // Background
+            Rectangle backgroundRectangle = new Rectangle(0, 0, GraphicsDevice.Viewport.Bounds.Width, GraphicsDevice.Viewport.Bounds.Height);
+            spriteBatch.Draw(tex_background, backgroundRectangle, Color.White);
+
+            int w = GraphicsDevice.Viewport.Bounds.Width;
+            int h = GraphicsDevice.Viewport.Bounds.Height;
+
+            string launch = string.Format("Launch Game");
+            Vector2 size = FontGame.MeasureString(launch);
+
+            string exit = string.Format("exit");
+            Vector2 size2 = FontGame.MeasureString(exit);
+
+            Vector2 pos = new Vector2((w / 2) - (size.X / 2) - 5, (h / 2) - (size.Y / 2) - 5);
+            Vector2 pos2 = new Vector2((w / 2) - (size2.X / 2) - 5, (h / 2) - (size2.Y / 2) + size.Y + 20);
+
+            Rectangle backmenu;
+            //text
+            if (menu_state == 0)
+            {
+                backmenu = new Rectangle((int)pos.X, (int)pos.Y, (int)size.X - 10, (int)size.Y);
+            }
+            else
+            {
+                backmenu = new Rectangle((int)pos2.X, (int)pos2.Y, (int)size2.X - 10, (int)size2.Y);
+            }
+
+
+            // Background
+            spriteBatch.Draw(tex_menu, backmenu, Color.White);
+
+            spriteBatch.DrawString(FontGame, launch, pos, Color.BlanchedAlmond);
+            spriteBatch.DrawString(FontGame, exit, pos2, Color.BlanchedAlmond);
+
         }
 
         protected void DrawLevel(GameTime gameTime)
