@@ -54,7 +54,9 @@ namespace GG2014
         double origSize;
 
         // How long before an ear gets displayed
-        static float endTime = 2.0f;
+        static float endTime = 30.0f;
+        // String that is displayed when play fails ("score")
+        string remainingTime;
 
         public Game1()
         {
@@ -171,6 +173,9 @@ namespace GG2014
             // Choose a cord randomly
             int cordId = mRandomProvider.getCorde();
 
+            // Update remaining time string in case we die
+            remainingTime = ((int)(endTime - gameTime.TotalGameTime.TotalSeconds)).ToString() + " seconds left";
+
             // Is it time to display a new Enemy?
             if (EnemiTime > elapsed_time_enemis && !Pause)
             {
@@ -210,7 +215,6 @@ namespace GG2014
                  updateEar();
             }
 
-           
             // Keyboard functions
             KeyboardState kState = Keyboard.GetState();
 
@@ -232,7 +236,6 @@ namespace GG2014
                 touche_down = true;
             }
 
-            // Keyboard functions
             if (kState.IsKeyDown(Keys.RightControl) && kState.IsKeyDown(Keys.OemOpenBrackets))
             {
                 // CHEAT
@@ -240,10 +243,11 @@ namespace GG2014
             }
 
             double angle = note.getAngle();
+
             if (kState.IsKeyDown(Keys.Space) && !jump_touche_down)
             {
                 last_cord_id = idNoteCorde;
-                if (angle <= MathHelper.PiOver2-0.2)
+                if (angle <= MathHelper.PiOver2 - 0.2)
                 {
                     idNoteCorde--;
                     JumpAngle = MathHelper.PiOver2;
@@ -425,9 +429,9 @@ namespace GG2014
         private void gameOver()
         {
             Pause = true;
-            System.Console.WriteLine("You got screwed");
-            System.Threading.Thread.Sleep(1000);
-            restartGame();
+            Etat_game = GameState.GAME_OVER;
+            // Delete remaining ennemies
+            ListObject.Clear();
         }
 
         private bool checkForDeath()
@@ -439,10 +443,7 @@ namespace GG2014
             }
             else
             {
-                Pause = true;
-                Etat_game = GameState.GAME_OVER;
-                // Delete remaining ennemies
-                ListObject.Clear();
+                gameOver();
             }
             return false;
         }
@@ -528,14 +529,27 @@ namespace GG2014
 
         protected void DrawMenu(GameTime gameTime)
         {
+            // TODO
         }
 
         protected void DrawLevel(GameTime gameTime)
         {
+            int w = GraphicsDevice.Viewport.Bounds.Width;
+            int h = GraphicsDevice.Viewport.Bounds.Height;
 
             // Background
             Rectangle backgroundRectangle = new Rectangle(0, 0, GraphicsDevice.Viewport.Bounds.Width, GraphicsDevice.Viewport.Bounds.Height);
             spriteBatch.Draw(tex_background, backgroundRectangle, Color.White);
+
+            // "Score"
+            /* if (ear == null)
+            {
+                
+                string timeTillEnd = ((int)(endTime - gameTime.TotalGameTime.TotalSeconds)).ToString();
+                Vector2 size = FontGame.MeasureString(timeTillEnd);
+                Vector2 pos = new Vector2((w / 2) - (size.X / 2), 20);
+                spriteBatch.DrawString(FontGame, timeTillEnd, pos, Color.BlanchedAlmond);
+            } */
 
             for (int i = 0; i <= 3; i++)
             {
@@ -556,22 +570,28 @@ namespace GG2014
 
         protected void DrawWin(GameTime gameTime)
         {
-            Rectangle backgroundRectangle = new Rectangle(0, 0, GraphicsDevice.Viewport.Bounds.Width, GraphicsDevice.Viewport.Bounds.Height);
+            int w = GraphicsDevice.Viewport.Bounds.Width;
+            int h = GraphicsDevice.Viewport.Bounds.Height;
+
+            Rectangle backgroundRectangle = new Rectangle(0, 0, w, h);
             spriteBatch.Draw(tex_background, backgroundRectangle, Color.White);
 
             // TODO Show score or something?
             string epicWin = string.Format("EPIC WIN");
             Vector2 size = FontGame.MeasureString(epicWin);
-            int w = GraphicsDevice.Viewport.Bounds.Width;
-            int h = GraphicsDevice.Viewport.Bounds.Height;
-
+           
             Vector2 pos = new Vector2((w / 2) - (size.X / 2), (h / 2) - (size.Y / 2));
             spriteBatch.DrawString(FontGame, epicWin, pos, Color.BlanchedAlmond);
         }
 
+        
+
         protected void DrawEnd(GameTime gameTime)
         {
-            Rectangle backgroundRectangle = new Rectangle(0, 0, GraphicsDevice.Viewport.Bounds.Width, GraphicsDevice.Viewport.Bounds.Height);
+            int w = GraphicsDevice.Viewport.Bounds.Width;
+            int h = GraphicsDevice.Viewport.Bounds.Height;
+
+            Rectangle backgroundRectangle = new Rectangle(0, 0, w, h);
             spriteBatch.Draw(tex_background, backgroundRectangle, Color.White);
 
 
@@ -581,12 +601,16 @@ namespace GG2014
             }
 
             string gameover = string.Format("GAME OVER");
-            Vector2 size = FontGame.MeasureString(gameover);
-            int w = GraphicsDevice.Viewport.Bounds.Width;
-            int h = GraphicsDevice.Viewport.Bounds.Height;
 
+            Vector2 size = FontGame.MeasureString(gameover);
             Vector2 pos = new Vector2((w / 2) - (size.X / 2), (h / 2) - (size.Y / 2));
+
             spriteBatch.DrawString(FontGame, gameover, pos, Color.BlanchedAlmond);
+
+            size = FontGame.MeasureString(remainingTime);
+            pos = new Vector2((w / 2) - (size.X / 2), (h / 2) - (size.Y / 2) + 80);
+
+            spriteBatch.DrawString(FontGame, remainingTime, pos, Color.BlanchedAlmond);
         }
     }
 }
