@@ -47,11 +47,30 @@ namespace GG2014
         
         bool Pause;
         GenerateurObjet mRandomProvider;
+        double origSize;
 
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
+
+            // Init vars
+            idNoteCorde = 1;
+            touche_down = false;
+            jump_touche_down = false;
+            Pause = false;
+
+            // Timers
+            EndTime = 0;
+            EnemiTime = 0;
+            TouchTime = 0;
+            JumpTime = 0;
+            JumpAngle = 0;
+            elapsed_time_enemis = 2.0f;
+            tip_up_elapsed_time = 0;
+
+            // Random generator
+            mRandomProvider = new GenerateurObjet();
         }
 
         protected override void Initialize()
@@ -77,16 +96,6 @@ namespace GG2014
             cordes[2] = new Corde((int)(w - (w / 2)), (int)(2 * h / 3), (int)(w - (w / 2.5)), h - h / 16);
             cordes[3] = new Corde((int)(w - (w / 2)), (int)(2*h / 3), w - (w / 6), h - h / 16);
 
-            // Timers
-            EndTime = 0;
-            EnemiTime = 0;
-            TouchTime = 0;
-            JumpTime = 0;
-            JumpAngle = 0;
-            elapsed_time_enemis = 2.0f;
-            tip_up_elapsed_time = 0;
-            mRandomProvider = new GenerateurObjet();
-
             // Textures
             Texture2D tex1, tex2, tex3;
             tex1 = Content.Load<Texture2D>("noire-128");
@@ -100,14 +109,8 @@ namespace GG2014
                 cordes[i].genBaseTexture(GraphicsDevice);
             }
             note = new Note(0, 0, tex1, tex2, tex3, 3);
-            idNoteCorde = 1;
-            
+            origSize = note.getSize();
             vent = new Vent(0, 0, Content.Load<Texture2D>("cloud"), -1);
-
-            // Init
-            touche_down = false;
-            jump_touche_down = false;
-            Pause = false;
         }
 
         protected override void UnloadContent()
@@ -115,11 +118,8 @@ namespace GG2014
             // TODO: Unload any non ContentManager content here
         }
 
-        protected override void Update(GameTime gameTime)
+        private void updateTimers(GameTime gameTime)
         {
-            vent.setPosition(xi, 0);
-            xi--;
-
             // Update timers
             double time = gameTime.ElapsedGameTime.TotalSeconds;
             EnemiTime += time;
@@ -128,6 +128,14 @@ namespace GG2014
             FallTime += time;
             EndTime += time;
             tip_up_elapsed_time += time;
+        }
+
+        protected override void Update(GameTime gameTime)
+        {
+            updateTimers(gameTime);
+
+            vent.setPosition(xi, 0);
+            xi--;
 
             // Choose a cord randomly
             int cordId = mRandomProvider.getCorde();
@@ -168,24 +176,7 @@ namespace GG2014
 
             // Update enemies
              if (!Pause) {
-                for (int i = 0; i < ListObject.Count - 1; i++)
-                {
-                    Enemis temp2 = ListObject[i];
-                    if (temp2.getPos().Y > graphics.PreferredBackBufferWidth)
-                    {
-                        ListObject.Remove(temp2);
-                    }
-                    else
-                    {
-                        ListObject[i].setPosition((temp2.getPos().X + (temp2.getDir().X * 3)), (temp2.getPos().Y + (temp2.getDir().Y * 3)));
-                        ListObject[i].setSize(temp2.getSize() + 0.5f);
-                    }
-                    if (temp2.getPos().X >= note.getPos().X - 20 && temp2.getPos().X <= note.getPos().X + 20 && temp2.getPos().Y > note.getPos().Y && !jump_touche_down)
-                    {
-                        ListObject.Remove(temp2);
-                        checkForDeath();
-                    }
-                }
+                 updateEnnemies();
             }
 
             // Update ear
@@ -216,10 +207,9 @@ namespace GG2014
             }
 
             // Keyboard functions
-            Keys[] currentPressedKeys = kState.GetPressedKeys();
-            // CHEAT
             if (kState.IsKeyDown(Keys.RightControl) && kState.IsKeyDown(Keys.OemOpenBrackets))
             {
+                // CHEAT
                 note.cheetah();
             }
 
@@ -239,44 +229,21 @@ namespace GG2014
                     JumpAngle = 3*MathHelper.PiOver2;
                     jump_touche_down = true;
                 }
-                
             }
 
+            
             if (jump_touche_down && !Pause)
             {
-                if (idNoteCorde > last_cord_id)
-                {
-                    int r = (int)(cordes[idNoteCorde].getEnd().X - cordes[last_cord_id].getEnd().X) / 2;
-                    int x = (int)cordes[idNoteCorde].getEnd().X - r;
-                    int y = (int)cordes[idNoteCorde].getEnd().Y;
-                    float nx = (float)(x + r * Math.Sin(JumpAngle));
-                    float ny = (float)(y + r * Math.Cos(JumpAngle));
-                    note.setPosition(nx, ny);
-                    JumpAngle-=0.05f;
-                    note.increaseAngle();
-                    if (JumpAngle <= MathHelper.PiOver2)
-                    {
-                        note.resetAngle();
-                        jump_touche_down = false;
-                    }
-                }
-                else
-                {
-                    int r = (int)(cordes[last_cord_id].getEnd().X - cordes[idNoteCorde].getEnd().X) / 2;
-                    int x = (int)cordes[last_cord_id].getEnd().X - r;
-                    int y = (int)cordes[last_cord_id].getEnd().Y;
-                    float nx = (float)(x + r * Math.Sin(JumpAngle));
-                    float ny = (float)(y + r * Math.Cos(JumpAngle));
-                    note.setPosition(nx, ny);
-                    JumpAngle += 0.05f;
-                    note.decreaseAngle();
-                    if (JumpAngle >= 3*MathHelper.PiOver2)
-                    {
-                        note.resetAngle();
-                        jump_touche_down = false;
-                    }
-                }
+                jump();
             }
+
+            /*
+            if (idNoteCorde < 0 || idNoteCorde > 3)
+            {
+                System.Console.WriteLine("GAME OVER (" + idNoteCorde + ")");
+                System.Environment.Exit(0);
+            }
+             * */
 
             // Check angle 
             if (note.getAngle() > MathHelper.Pi && !fall_touche_down && !jump_touche_down)
@@ -289,17 +256,112 @@ namespace GG2014
                 fall_touche_down = true;
             }
 
-            if (idNoteCorde < 0 || idNoteCorde > 3)
-            {
-                System.Console.WriteLine("GAME OVER (" + idNoteCorde + ")");
-                System.Environment.Exit(0);
-            }
             if (!jump_touche_down)
             {
                 note.setPosition(cordes[idNoteCorde].getEnd().X, cordes[idNoteCorde].getEnd().Y);
             }
 
             base.Update(gameTime);
+        }
+
+        private void updateEnnemies()
+        {
+            for (int i = 0; i < ListObject.Count - 1; i++)
+            {
+                Enemis temp2 = ListObject[i];
+                if (temp2.getPos().Y > graphics.PreferredBackBufferWidth)
+                {
+                    ListObject.Remove(temp2);
+                }
+                else
+                {
+                    ListObject[i].setPosition((temp2.getPos().X + (temp2.getDir().X * 3)), (temp2.getPos().Y + (temp2.getDir().Y * 3)));
+                    ListObject[i].setSize(temp2.getSize() + 0.5f);
+                }
+                if (temp2.getPos().X >= note.getPos().X - 20 && temp2.getPos().X <= note.getPos().X + 20 && temp2.getPos().Y > note.getPos().Y && !jump_touche_down)
+                {
+                    ListObject.Remove(temp2);
+                    checkForDeath();
+                }
+            }
+        }
+
+        
+
+        private void jump()
+        {
+            if (idNoteCorde > 3) // Suicide (right)
+            {
+                int r = (int)(cordes[last_cord_id].getEnd().X + 120 - cordes[last_cord_id].getEnd().X) / 2;
+                int x = (int)cordes[last_cord_id].getEnd().X + 120 - r;
+                int y = (int)cordes[last_cord_id].getEnd().Y;
+                float nx = (float)(x + r * Math.Sin(JumpAngle));
+                float ny = (float)(y + r * Math.Cos(JumpAngle));
+                note.setPosition(nx, ny);
+                JumpAngle -= 0.05f;
+                note.increaseAngle();
+                note.setSize(note.getSize() - 1.0);
+                if (JumpAngle <= MathHelper.PiOver2)
+                {
+                    checkForDeath();
+                    note.setSize(origSize);
+                    note.resetAngle();
+                    idNoteCorde = 1;
+                    jump_touche_down = false;
+                }
+            }
+            else if (idNoteCorde < 0) // Suicide (left)
+            {
+                int r = (int)(cordes[0].getEnd().X - 120) / 2;
+                int x = (int)cordes[0].getEnd().X - 100 - r;
+                int y = (int)cordes[0].getEnd().Y;
+                float nx = (float)(x + r * Math.Sin(JumpAngle));
+                float ny = (float)(y + r * Math.Cos(JumpAngle));
+                note.setPosition(nx, ny);
+                JumpAngle += 0.05f;
+                note.decreaseAngle();
+                note.setSize(note.getSize() - 1.0);
+                if (JumpAngle >= 3 * MathHelper.PiOver2)
+                {
+                    checkForDeath();
+                    note.setSize(origSize);
+                    note.resetAngle();
+                    idNoteCorde = 1;
+                    jump_touche_down = false;
+                }
+            }
+            else if (idNoteCorde > last_cord_id)
+            {
+                int r = (int)(cordes[idNoteCorde].getEnd().X - cordes[last_cord_id].getEnd().X) / 2;
+                int x = (int)cordes[idNoteCorde].getEnd().X - r;
+                int y = (int)cordes[idNoteCorde].getEnd().Y;
+                float nx = (float)(x + r * Math.Sin(JumpAngle));
+                float ny = (float)(y + r * Math.Cos(JumpAngle));
+                note.setPosition(nx, ny);
+                JumpAngle -= 0.05f;
+                note.increaseAngle();
+                if (JumpAngle <= MathHelper.PiOver2)
+                {
+                    note.resetAngle();
+                    jump_touche_down = false;
+                }
+            }
+            else
+            {
+                int r = (int)(cordes[last_cord_id].getEnd().X - cordes[idNoteCorde].getEnd().X) / 2;
+                int x = (int)cordes[last_cord_id].getEnd().X - r;
+                int y = (int)cordes[last_cord_id].getEnd().Y;
+                float nx = (float)(x + r * Math.Sin(JumpAngle));
+                float ny = (float)(y + r * Math.Cos(JumpAngle));
+                note.setPosition(nx, ny);
+                JumpAngle += 0.05f;
+                note.decreaseAngle();
+                if (JumpAngle >= 3 * MathHelper.PiOver2)
+                {
+                    note.resetAngle();
+                    jump_touche_down = false;
+                }
+            }
         }
 
         private bool checkForDeath()
