@@ -126,23 +126,32 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="wootcha.wav">
+      <Name>wootcha</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+    <Compile Include="putain.wav">
+      <Name>putain</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
     <Compile Include="Mozart - March in D major K.189.mp3">
       <Name>Mozart - March in D major K.189</Name>
       <Importer>Mp3Importer</Importer>
       <Processor>SongProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
     <Compile Include="Mozart - March in D major K.215.mp3">
       <Name>Mozart - March in D major K.215</Name>
       <Importer>Mp3Importer</Importer>
       <Processor>SongProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
     <Compile Include="Mozart - March in D major K.237.mp3">
       <Name>Mozart - March in D major K.237</Name>
       <Importer>Mp3Importer</Importer>
       <Processor>SongProcessor</Processor>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\$(XnaFrameworkVersion)\Microsoft.Xna.GameStudio.ContentPipeline.targets" />

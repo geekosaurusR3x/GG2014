@@ -34,7 +34,6 @@ namespace GG2014
         int xi = 1380;
         Texture2D tex_background;
         Texture2D tex_ear;
-        Texture2D tex_menu;
         float elapsed_time_enemis;
         SpriteFont Font;
         SpriteFont FontGame;
@@ -54,6 +53,9 @@ namespace GG2014
         bool Pause;
         GenerateurObjet mRandomProvider;
         double origSize;
+
+        SoundEffect jumpSound;
+        SoundEffect swearingSound;
 
         // How long before an ear gets displayed
         static float endTime = 30.0f;
@@ -132,12 +134,16 @@ namespace GG2014
             origSize = note.getSize();
             vent = new Vent(0, 0, Content.Load<Texture2D>("cloud"), -1);
 
+            // Fonts
             Font = Content.Load<SpriteFont>("font");
             FontGame = Content.Load<SpriteFont>("fontGame");
 
             Random rand = new Random();
             int id_musiques = rand.Next(0,3);
             MediaPlayer.Play(Musiques[id_musiques]);
+            // Audio
+            jumpSound = Content.Load<SoundEffect>("wootcha");
+            swearingSound = Content.Load<SoundEffect>("putain");
         }
 
         protected override void UnloadContent()
@@ -273,16 +279,17 @@ namespace GG2014
                     idNoteCorde--;
                     JumpAngle = MathHelper.PiOver2;
                     jump_touche_down = true;
+                    jumpSound.Play();
                 }
                 else if (angle >= MathHelper.PiOver2 + 0.2)
                 {
                     idNoteCorde++;
-                    JumpAngle = 3*MathHelper.PiOver2;
+                    JumpAngle = 3 * MathHelper.PiOver2;
                     jump_touche_down = true;
+                    jumpSound.Play();
                 }
             }
 
-            
             if (jump_touche_down && !Pause)
             {
                 jump();
@@ -476,6 +483,7 @@ namespace GG2014
 
         private bool checkForDeath()
         {
+            swearingSound.Play();
             if (note.getLivesLeft() > 1)
             {
                 note.kill();
@@ -646,10 +654,10 @@ namespace GG2014
 
             spriteBatch.DrawString(FontGame, gameover, pos, Color.BlanchedAlmond);
 
-            size = FontGame.MeasureString(remainingTime);
+            size = Font.MeasureString(remainingTime);
             pos = new Vector2((w / 2) - (size.X / 2), (h / 2) - (size.Y / 2) + 80);
 
-            spriteBatch.DrawString(FontGame, remainingTime, pos, Color.BlanchedAlmond);
+            spriteBatch.DrawString(Font, remainingTime, pos, Color.BlanchedAlmond);
         }
     }
 }
