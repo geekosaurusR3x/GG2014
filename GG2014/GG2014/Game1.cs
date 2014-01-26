@@ -290,7 +290,7 @@ namespace GG2014
             if (ear != null)
             {
                 ear.setPosition((ear.getPos().X + (ear.getDir().X / 1)), (ear.getPos().Y + (ear.getDir().Y / 1)));
-
+                ear.setSize(ear.getSize() + 0.5f);
                 // Collision check
                 if (ear.getPos().X >= ear.getPos().X - 20 && ear.getPos().X <= note.getPos().X + 20 && ear.getPos().Y > note.getPos().Y && !jump_touche_down)
                 {
@@ -414,6 +414,7 @@ namespace GG2014
             EnemiTime = TouchTime = JumpTime = FallTime = EndTime = tip_up_elapsed_time = 0;
             touche_down = jump_touche_down = fall_touche_down = false;
             idNoteCorde = 1;
+            Etat_game = 1;
             Pause = false;
         }
 
@@ -455,13 +456,14 @@ namespace GG2014
 
             for (int i = 0; i < ListObject.Count; i++)
             {
-                if (ListObject[i].getPos().Y > GraphicsDevice.Viewport.Bounds.Height)
+                Enemis leaf = ListObject[i];
+                if (leaf.getPos().Y > GraphicsDevice.Viewport.Bounds.Height + leaf.getPos().Y - ((int)leaf.getSize() / 2))
                 {
-                    ListObject.Remove(ListObject[i]);
+                    ListObject.Remove(leaf);
                 }
                 else
                 {
-                    ListObject[i].setPosition((ListObject[i].getPos().X + (ListObject[i].getDir().X * 3)), (ListObject[i].getPos().Y + (ListObject[i].getDir().Y * 3))); ;
+                    leaf.setPosition((leaf.getPos().X + (leaf.getDir().X * 3)), (leaf.getPos().Y + (leaf.getDir().Y * 3)));
                 }
             }
 
@@ -471,6 +473,11 @@ namespace GG2014
                 System.Environment.Exit(0);
             }
 
+            // Restart
+            if (kState.IsKeyDown(Keys.R))
+            {
+                restartGame();
+            }
         }
 
         protected override void Draw(GameTime gameTime)
