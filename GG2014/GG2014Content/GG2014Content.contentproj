@@ -155,11 +155,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="font menu.png">
-      <Name>font menu</Name>
-	  <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-	   </Compile>
     <Compile Include="double-croche-angel-128.png">
       <Name>double-croche-angel-128</Name>
       <Importer>TextureImporter</Importer>
@@ -179,6 +174,13 @@
   <ItemGroup>
     <Compile Include="double-croche-devil-128.png">
       <Name>double-croche-devil-128</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="fond_menu.png">
+      <Name>fond_menu</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

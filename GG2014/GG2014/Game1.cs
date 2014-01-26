@@ -60,7 +60,7 @@ namespace GG2014
         SoundEffect swearingSound;
 
         // How long before an ear gets displayed
-        static float endTime = 30.0f;
+        static float endTime = 1.0f;
         // String that is displayed when play fails ("score")
         string remainingTime;
 
@@ -123,7 +123,7 @@ namespace GG2014
             tex_ennemy_leaf = Content.Load<Texture2D>("double-croche-devil-128");
             tex_background = Content.Load<Texture2D>("background");
             tex_ear = Content.Load<Texture2D>("ear-128");
-            tex_menu = Content.Load<Texture2D>("font menu");
+            tex_menu = Content.Load<Texture2D>("fond_menu");
 
             Musiques[0] = Content.Load<Song>("Mozart - March in D major K.189");
             Musiques[1] = Content.Load<Song>("Mozart - March in D major K.215");
@@ -712,8 +712,12 @@ namespace GG2014
             // TODO Show score or something?
             string epicWin = string.Format("EPIC WIN");
             Vector2 size = FontGame.MeasureString(epicWin);
-           
-            Vector2 pos = new Vector2((w / 2) - (size.X / 2), (h / 2) - (size.Y / 2));
+
+            Vector2 pos = new Vector2((w / 2) - (size.X / 2) - 5, (h / 2) - (size.Y / 2) - 5);
+            Rectangle dialogBgRect = new Rectangle((int)pos.X - 40, (int)pos.Y - 40, (int)size.X + 80, (int)size.Y + 80);
+            spriteBatch.Draw(tex_menu, dialogBgRect, Color.White);
+
+            pos = new Vector2((w / 2) - (size.X / 2), (h / 2) - (size.Y / 2));
             spriteBatch.DrawString(FontGame, epicWin, pos, Color.BlanchedAlmond);
         }
 
@@ -727,16 +731,19 @@ namespace GG2014
             Rectangle backgroundRectangle = new Rectangle(0, 0, w, h);
             spriteBatch.Draw(tex_background, backgroundRectangle, Color.White);
 
-
+            // Background ennemies
             for (int i = 0; i < ListObject.Count; i++)
             {
                 ListObject[i].Draw(spriteBatch);
             }
+
             string gameover = string.Format("GAME OVER");
-
             Vector2 size = FontGame.MeasureString(gameover);
-            Vector2 pos = new Vector2((w / 2) - (size.X / 2), (h / 2) - (size.Y / 2));
 
+            Vector2 pos = new Vector2((w / 2) - (size.X / 2) - 5, (h / 2) - (size.Y / 2) - 5);
+            Rectangle dialogBgRect = new Rectangle((int)pos.X - 40, (int)pos.Y - 40, (int)size.X + 80, (int)size.Y + 120);
+
+            spriteBatch.Draw(tex_menu, dialogBgRect, Color.White);
             spriteBatch.DrawString(FontGame, gameover, pos, Color.BlanchedAlmond);
 
             size = Font.MeasureString(remainingTime);
