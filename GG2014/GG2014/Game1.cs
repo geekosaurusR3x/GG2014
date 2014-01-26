@@ -246,7 +246,7 @@ namespace GG2014
              * */
 
             // Check angle 
-            if (note.getAngle() > MathHelper.Pi && !fall_touche_down && !jump_touche_down)
+            if (angle > MathHelper.Pi && !fall_touche_down && !jump_touche_down)
             {
                 if (checkForDeath())
                 {
@@ -285,8 +285,6 @@ namespace GG2014
                 }
             }
         }
-
-        
 
         private void jump()
         {
