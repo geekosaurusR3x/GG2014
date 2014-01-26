@@ -180,9 +180,16 @@ namespace GG2014
             if (EnemiTime > elapsed_time_enemis && !Pause)
             {
                 EnemiTime -= elapsed_time_enemis;
-                Enemis temp = new Enemis(cordes[cordId].getStart().X, cordes[cordId].getStart().Y, cordes[cordId].getVectorDir());
+
+                Enemis temp = new Enemis(0, 0, cordes[cordId].getVectorDir());
                 temp.setSize(16);
                 temp.setTexture(tex_ennemy_leaf);
+                temp.setAnim(true);
+                temp.setP1(new Vector2(0, 0));
+                temp.setP2(cordes[cordId].getStart());
+                temp.setCorde(cordes[cordId].getStart());
+                temp.setJumpAngle(3*MathHelper.PiOver2);
+
                 ListObject.Add(temp);
             }
 
@@ -301,7 +308,7 @@ namespace GG2014
                 ear.setPosition((ear.getPos().X + (ear.getDir().X / 1)), (ear.getPos().Y + (ear.getDir().Y / 1)));
                 ear.setSize(ear.getSize() + 0.5f);
                 // Collision check
-                if (ear.getPos().X >= ear.getPos().X - 20 && ear.getPos().X <= note.getPos().X + 20 && ear.getPos().Y > note.getPos().Y && !jump_touche_down)
+                if (ear.getPos().X >= note.getPos().X - 20 && ear.getPos().X <= note.getPos().X + 20 && ear.getPos().Y > note.getPos().Y && !jump_touche_down)
                 {
                     Pause = true;
                     epicWin();
@@ -320,8 +327,26 @@ namespace GG2014
                 }
                 else
                 {
-                    ListObject[i].setPosition((temp2.getPos().X + (temp2.getDir().X * 3)), (temp2.getPos().Y + (temp2.getDir().Y * 3)));
-                    ListObject[i].setSize(temp2.getSize() + 0.5f);
+                    if(ListObject[i].isAnim())
+                    {
+                        int r = (int)(ListObject[i].getP2().X - ListObject[i].getP1().X) / 2;
+                        int x = (int)ListObject[i].getP2().X - r;
+                        int y = (int)ListObject[i].getP2().Y;
+                        float nx = (float)(x + r * Math.Sin(ListObject[i].getJumpAngle()));
+                        float ny = (float)(y + r * Math.Cos(ListObject[i].getJumpAngle()));
+                        ListObject[i].setPosition(nx, ny);
+                        ListObject[i].setJumpAngle(ListObject[i].getJumpAngle() - 0.05f);
+                        if (ListObject[i].getJumpAngle() <= MathHelper.PiOver2)
+                        {
+                            ListObject[i].setAnim(false);
+                            ListObject[i].setPosition(ListObject[i].getCorde().X, ListObject[i].getCorde().Y);
+                        }
+                    }
+                    else
+                    {
+                        ListObject[i].setPosition((temp2.getPos().X + (temp2.getDir().X * 3)), (temp2.getPos().Y + (temp2.getDir().Y * 3)));
+                        ListObject[i].setSize(temp2.getSize() + 0.5f);
+                    }
                 }
                 if (temp2.getPos().X >= note.getPos().X - 20 && temp2.getPos().X <= note.getPos().X + 20 && temp2.getPos().Y > note.getPos().Y && !jump_touche_down)
                 {
