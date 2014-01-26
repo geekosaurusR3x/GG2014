@@ -29,16 +29,18 @@ namespace GG2014
         Texture2D tex_ennemy_leaf;
         int xi = 1380;
         Texture2D tex_background;
+        float elapsed_time_enemis;
 
         Vent vent;
         Note note;
         double EnemiTime;
         double TouchTime;
         double JumpTime;
+        double tip_up_elapsed_time;
         double JumpAngle;
         int last_cord_id;
         double FallTime;
-
+        bool Pause;
         GenerateurObjet mRandomProvider;
 
         public Game1()
@@ -65,10 +67,10 @@ namespace GG2014
             int w = GraphicsDevice.Viewport.Bounds.Width;
             int h = GraphicsDevice.Viewport.Bounds.Height;
 
-            cordes[0] = new Corde((int)(w / 3), h / 3, w / 8, h - h / 16);
-            cordes[1] = new Corde((int)(w / 2.1), h / 3, w / 3, h - h / 16);
-            cordes[2] = new Corde((int)(w - (w / 2.1)), h / 3, w - (w / 3), h - h / 16);
-            cordes[3] = new Corde((int)(w - (w / 3)), h / 3, w - (w / 8), h - h / 16);
+            cordes[0] = new Corde((int)(w / 2), (int)(2*h / 3), w / 6, h - h / 16);
+            cordes[1] = new Corde((int)(w / 2), (int)(2*h / 3), (int)(w / 2.5), h - h / 16);
+            cordes[2] = new Corde((int)(w - (w / 2)), (int)(2 * h / 3), (int)(w - (w / 2.5)), h - h / 16);
+            cordes[3] = new Corde((int)(w - (w / 2)), (int)(2*h / 3), w - (w / 6), h - h / 16);
 
             for (int i = 0; i <= 3; i++)
             {
@@ -79,18 +81,21 @@ namespace GG2014
             TouchTime = 0;
             JumpTime = 0;
             JumpAngle = 0;
+            elapsed_time_enemis = 2.0f;
+            tip_up_elapsed_time = 0;
             mRandomProvider = new GenerateurObjet();
             Texture2D tex1, tex2, tex3;
             tex1 = Content.Load<Texture2D>("noire-32");
             tex2 = Content.Load<Texture2D>("double-croche-32");
             tex3 = Content.Load<Texture2D>("triple-croche-32");
-            tex_ennemy_leaf = Content.Load<Texture2D>("leaf-32");
+            tex_ennemy_leaf = Content.Load<Texture2D>("leaf-128");
             tex_background = Content.Load<Texture2D>("background");
             note = new Note(0, 0, tex1, tex2, tex3, 3);
             idNoteCorde = 1;
             touche_down = false;
             vent = new Vent(0, 0, Content.Load<Texture2D>("cloud"), -1);
             jump_touche_down = false;
+            Pause = false;
         }
 
         protected override void UnloadContent()
@@ -107,46 +112,54 @@ namespace GG2014
             TouchTime += time;
             JumpTime += time;
             FallTime += time;
+            tip_up_elapsed_time += time;
 
-            if (EnemiTime > 2.0f)
+            if (EnemiTime > elapsed_time_enemis && !Pause)
             {
-                EnemiTime -= 2.0f;
+                EnemiTime -= elapsed_time_enemis;
                 int cordId = mRandomProvider.getCorde();
                 Enemis temp = new Enemis(cordes[cordId].getStart().X, cordes[cordId].getStart().Y, cordes[cordId].getVectorDir());
-                temp.setSize(32);
+                temp.setSize(16);
                 temp.setTexture(tex_ennemy_leaf);
                 ListObject.Add(temp);
             }
 
-            if (TouchTime > 0.05f)
+            if (tip_up_elapsed_time > 10.0f && !Pause)
             {
-                TouchTime -= 0.05f;
+                tip_up_elapsed_time -= 10.0f;
+                elapsed_time_enemis -= 0.1f;
+            }
+            if (TouchTime > 0.01f && !Pause)
+            {
+                TouchTime -= 0.01f;
                 touche_down = false;
             }
 
-            if (FallTime > 0.5f)
+            if (FallTime > 0.5f && !Pause)
             {
                 FallTime -= 0.5f;
                 fall_touche_down = false;
             }
-
-            for (int i = 0; i < ListObject.Count - 1; i++)
+            if (!Pause)
             {
-                Enemis temp2 = ListObject[i];
-                if (temp2.getPos().Y > graphics.PreferredBackBufferWidth)
+                for (int i = 0; i < ListObject.Count - 1; i++)
                 {
-                    ListObject.Remove(temp2);
-                }
-                else
-                {
-                    ListObject[i].setPosition((temp2.getPos().X + (temp2.getDir().X / 1)), (temp2.getPos().Y + (temp2.getDir().Y / 1)));
-                    ListObject[i].setSize(temp2.getSize());
-                }
+                    Enemis temp2 = ListObject[i];
+                    if (temp2.getPos().Y > graphics.PreferredBackBufferWidth)
+                    {
+                        ListObject.Remove(temp2);
+                    }
+                    else
+                    {
+                        ListObject[i].setPosition((temp2.getPos().X + (temp2.getDir().X * 3)), (temp2.getPos().Y + (temp2.getDir().Y * 3)));
+                        ListObject[i].setSize(temp2.getSize() + 0.5f);
+                    }
 
-                if (temp2.getPos().X >= note.getPos().X - 20 && temp2.getPos().X <= note.getPos().X + 20 && temp2.getPos().Y > note.getPos().Y && !jump_touche_down)
-                {
-                    ListObject.Remove(temp2);
-                    checkForDeath();
+                    if (temp2.getPos().X >= note.getPos().X - 20 && temp2.getPos().X <= note.getPos().X + 20 && temp2.getPos().Y > note.getPos().Y && !jump_touche_down)
+                    {
+                        ListObject.Remove(temp2);
+                        checkForDeath();
+                    }
                 }
             }
 
@@ -176,8 +189,6 @@ namespace GG2014
             // CHEAT
             if (kState.IsKeyDown(Keys.RightControl) && kState.IsKeyDown(Keys.OemOpenBrackets))
             {
-                
-                if (note.getAngle() <= MathHelper.PiOver4)
                 note.cheetah();
             }
 
@@ -200,7 +211,7 @@ namespace GG2014
                 
             }
 
-            if (jump_touche_down)
+            if (jump_touche_down && !Pause)
             {
                 if (idNoteCorde > last_cord_id)
                 {
@@ -214,6 +225,7 @@ namespace GG2014
                     note.increaseAngle();
                     if (JumpAngle <= MathHelper.PiOver2)
                     {
+                        note.resetAngle();
                         jump_touche_down = false;
                     }
                 }
@@ -229,6 +241,7 @@ namespace GG2014
                     note.decreaseAngle();
                     if (JumpAngle >= 3*MathHelper.PiOver2)
                     {
+                        note.resetAngle();
                         jump_touche_down = false;
                     }
                 }
@@ -267,7 +280,7 @@ namespace GG2014
             }
             else
             {
-                // Game over
+                Pause = true;
                 System.Console.WriteLine("You got screwed");
             }
             return false;
@@ -292,8 +305,10 @@ namespace GG2014
                 ListObject[i].Draw(spriteBatch);
             }
 
-            note.Draw(spriteBatch);
-            // vent.Draw(spriteBatch);
+            if (!Pause)
+            {
+                note.Draw(spriteBatch);
+            }
             spriteBatch.End();
             base.Draw(gameTime);
         }
