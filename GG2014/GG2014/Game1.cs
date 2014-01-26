@@ -639,7 +639,7 @@ namespace GG2014
             string launch = string.Format("Launch Game");
             Vector2 size = FontGame.MeasureString(launch);
 
-            string exit = string.Format("exit");
+            string exit = string.Format("Exit");
             Vector2 size2 = FontGame.MeasureString(exit);
 
             Vector2 pos = new Vector2((w / 2) - (size.X / 2) - 5, (h / 2) - (size.Y / 2) - 5);
