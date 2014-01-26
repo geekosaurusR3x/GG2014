@@ -25,6 +25,7 @@ namespace GG2014
         SpriteBatch spriteBatch;
         int idNoteCorde;
         Corde[] cordes;
+        Song[] Musiques;
         List<Enemis> ListObject;
         bool touche_down;
         bool jump_touche_down;
@@ -33,6 +34,7 @@ namespace GG2014
         int xi = 1380;
         Texture2D tex_background;
         Texture2D tex_ear;
+        Texture2D tex_menu;
         float elapsed_time_enemis;
         SpriteFont Font;
         SpriteFont FontGame;
@@ -98,6 +100,8 @@ namespace GG2014
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             cordes = new Corde[4];
+            Musiques = new Song[3];
+
             int w = GraphicsDevice.Viewport.Bounds.Width;
             int h = GraphicsDevice.Viewport.Bounds.Height;
 
@@ -114,6 +118,12 @@ namespace GG2014
             tex_ennemy_leaf = Content.Load<Texture2D>("leaf-128");
             tex_background = Content.Load<Texture2D>("background");
             tex_ear = Content.Load<Texture2D>("ear-128");
+
+            Musiques[0] = Content.Load<Song>("Mozart - March in D major K.189");
+            Musiques[1] = Content.Load<Song>("Mozart - March in D major K.215");
+            Musiques[2] = Content.Load<Song>("Mozart - March in D major K.237");
+
+            
             for (int i = 0; i <= 3; i++)
             {
                 cordes[i].genBaseTexture(GraphicsDevice);
@@ -124,6 +134,10 @@ namespace GG2014
 
             Font = Content.Load<SpriteFont>("font");
             FontGame = Content.Load<SpriteFont>("fontGame");
+
+            Random rand = new Random();
+            int id_musiques = rand.Next(0,3);
+            MediaPlayer.Play(Musiques[id_musiques]);
         }
 
         protected override void UnloadContent()
@@ -455,6 +469,7 @@ namespace GG2014
         {
             Pause = true;
             Etat_game = GameState.GAME_OVER;
+            MediaPlayer.Stop();
             // Delete remaining ennemies
             ListObject.Clear();
         }
@@ -624,7 +639,6 @@ namespace GG2014
             {
                 ListObject[i].Draw(spriteBatch);
             }
-
             string gameover = string.Format("GAME OVER");
 
             Vector2 size = FontGame.MeasureString(gameover);
